@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    namespace = "ru.nsu.ccfit.pinmapapp"
-    compileSdk = 33
+    namespace = "ru.nsu.ccfit.pinmap"
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = "ru.nsu.ccfit.pinmapapp"
-        minSdk = 27
-        targetSdk = 33
+        applicationId = "ru.nsu.ccfit.pinmap"
+        minSdk = 26
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -19,10 +19,6 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
     compileOptions {

@@ -1,4 +1,4 @@
-package fit.g20202.osmdroidtest;
+package ru.nsu.ccfit.pinmap;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("fit.g20202.osmdroidtest", appContext.getPackageName());
+        assertEquals("ru.nsu.ccfit.pinmapapp", appContext.getPackageName());
     }
 }

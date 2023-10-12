@@ -1,4 +1,4 @@
-package fit.g20202.osmdroidtest;
+package ru.nsu.ccfit.pinmap;
 
 import android.Manifest;
 import android.content.Context;

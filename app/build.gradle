@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    namespace 'fit.g20202.osmdroidtest'
+    namespace 'ru.nsu.ccfit.pinmap'
     compileSdk 34
 
     defaultConfig {
-        applicationId "fit.g20202.osmdroidtest"
-        minSdk 24
+        applicationId "ru.nsu.ccfit.pinmap"
+        minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -19,7 +19,6 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {

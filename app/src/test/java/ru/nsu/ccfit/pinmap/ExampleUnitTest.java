@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.pinmapapp;
+package ru.nsu.ccfit.pinmap;
 
 import org.junit.Test;
 
