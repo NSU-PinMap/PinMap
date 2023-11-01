@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "ru.nsu.ccfit.tsd.pinmap"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "ru.nsu.ccfit.tsd.pinmap"
