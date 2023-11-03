@@ -12,8 +12,8 @@ class Pin(
     var tags: MutableList<String> = ArrayList() /* TODO: вынести теги в класс или оставить так?
                                         В случае 1 можно использовать теги как сущности
                                         для поиска в программе*/
-    var description: String? = null
-    var mood: UByte? = null
+    var description: String = ""
+    var mood: UByte = 0u
     var date: Date? = null
 }
 
