@@ -5,7 +5,7 @@ import java.util.Date
 class Pin(
     var id: Int,
     var name: String,
-    var latitutde: Double,
+    var latitude: Double,
     var longitude: Double
 )
 {
