@@ -1,14 +1,14 @@
 package ru.nsu.ccfit.tsd.pinmap.pins
 
 class PinController {
-    /* var pinRepository : PinRepository TODO: Подключить конкретный класс,
+    /* var pinStorage : PinStorage TODO: Подключить конкретный класс,
                                            отвечающий за работу с базой данных, весь код
                                            раскомментировать */
-    var pins : MutableList<Pin> = ArrayList() // pinRepository.getAllPins()
+    var pins : MutableList<Pin> = ArrayList() // pinStorage.getAllPins()
 
     fun save(pin: Pin): Boolean {
         /*
-        val newPin = pinRepository.save(pin)
+        val newPin = pinStorage.save(pin)
 
         if (newPin == null)
             return false
@@ -22,13 +22,13 @@ class PinController {
     }
 
     fun delete(pin: Pin) : Boolean {
-        // return pinRepository.delete(pin)
+        // return pinStorage.delete(pin)
         return false
     }
 
     fun getAllPins(): MutableList<Pin> {
         if (pins.isEmpty()) {
-            // pins = pinRepository.getAllPins()
+            // pins = pinStorage.getAllPins()
         }
 
         return pins
