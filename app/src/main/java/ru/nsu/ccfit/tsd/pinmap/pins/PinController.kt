@@ -1,10 +1,10 @@
 package ru.nsu.ccfit.tsd.pinmap.pins
 
 class PinController {
-    var pins : MutableList<Pin> = ArrayList()
     /* var pinRepository : PinRepository TODO: Подключить конкретный класс,
                                            отвечающий за работу с базой данных, весь код
                                            раскомментировать */
+    var pins : MutableList<Pin> = ArrayList() // pinRepository.getAllPins()
 
     fun save(pin: Pin): Boolean {
         /*
