@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/startFragment">
+
+    <fragment
+        android:id="@+id/startFragment"
+        android:name="ru.nsu.ccfit.tsd.pinmap.fragments.StartFragment"
+        android:label="fragment_start"
+        tools:layout="@layout/fragment_start" >
+        <action
+            android:id="@+id/action_startFragment_to_bottomSheetFragment"
+            app:destination="@id/bottomSheetFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_pinConstructorFragment"
+            app:destination="@id/pinConstructorFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/bottomSheetFragment"
+        android:name="ru.nsu.ccfit.tsd.pinmap.fragments.BottomSheetFragment"
+        android:label="fragment_bottom_sheet"
+        tools:layout="@layout/fragment_bottom_sheet" >
+        <action
+            android:id="@+id/action_bottomSheetFragment_to_startFragment"
+            app:destination="@id/startFragment" />
+        <action
+            android:id="@+id/action_bottomSheetFragment_to_themesFragment"
+            app:destination="@id/themesFragment" />
+        <action
+            android:id="@+id/action_bottomSheetFragment_to_mainMenuFragment"
+            app:destination="@id/mainMenuFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/themesFragment"
+        android:name="ru.nsu.ccfit.tsd.pinmap.fragments.ThemesFragment"
+        android:label="fragment_themes"
+        tools:layout="@layout/fragment_themes" >
+        <action
+            android:id="@+id/action_themesFragment_to_bottomSheetFragment2"
+            app:destination="@id/bottomSheetFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainMenuFragment"
+        android:name="ru.nsu.ccfit.tsd.pinmap.fragments.MainMenuFragment"
+        android:label="fragment_main_menu"
+        tools:layout="@layout/fragment_main_menu" >
+        <action
+            android:id="@+id/action_mainMenuFragment_to_bottomSheetFragment"
+            app:destination="@id/bottomSheetFragment" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_pinsListFragment"
+            app:destination="@id/pinsListFragment" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_tagsListFragment"
+            app:destination="@id/tagsListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pinConstructorFragment"
+        android:name="ru.nsu.ccfit.tsd.pinmap.fragments.PinConstructorFragment"
+        android:label="fragment_pin_constructor"
+        tools:layout="@layout/fragment_pin_constructor" >
+        <action
+            android:id="@+id/action_pinConstructorFragment_to_startFragment"
+            app:destination="@id/startFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pinsListFragment"
+        android:name="ru.nsu.ccfit.tsd.pinmap.fragments.PinsListFragment"
+        android:label="fragment_pins_list"
+        tools:layout="@layout/fragment_pins_list" />
+    <fragment
+        android:id="@+id/tagsListFragment"
+        android:name="ru.nsu.ccfit.tsd.pinmap.fragments.TagsListFragment"
+        android:label="fragment_tags_list"
+        tools:layout="@layout/fragment_tags_list" />
+</navigation>
