@@ -10,7 +10,7 @@ import ru.nsu.ccfit.tsd.pinmap.database.entities.PinEntity
 @Dao
 interface PinDao {
     @Insert
-    fun insertPin(pinEntity: PinEntity) : Long
+    fun insertPin(pinEntity: PinEntity): Long
 
     @Update
     fun updatePin(pinEntity: PinEntity)
@@ -25,5 +25,5 @@ interface PinDao {
     fun deletePin(pinEntity: PinEntity)
 
     @Query("SELECT EXISTS(SELECT * FROM pin WHERE pinId = :id)")
-    fun isPinExists(id : Int) : Boolean
+    fun doesPinExists(id: Int): Boolean
 }
