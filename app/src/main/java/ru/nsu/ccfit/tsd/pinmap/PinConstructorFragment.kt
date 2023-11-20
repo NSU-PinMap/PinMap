@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import org.osmdroid.views.MapView
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinConstructorBinding
 
-class PinConstructorFragment(mapView: MapView) : Fragment() {
+class PinConstructorFragment() : Fragment() {
     private var _binding: FragmentPinConstructorBinding? = null
     private val binding get() = _binding!!
 
