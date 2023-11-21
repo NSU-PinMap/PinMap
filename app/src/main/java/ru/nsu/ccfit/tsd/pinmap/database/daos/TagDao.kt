@@ -17,8 +17,8 @@ interface TagDao {
     @Query("SELECT name FROM tag")
     fun getAllTagsNames(): List<String>
 
-    @Query("SELECT tag.tagId, tag.name FROM pin_tag " +
-            "JOIN tag ON pin_tag.tagId = tag.tagId " +
+    @Query("SELECT * FROM tag " +
+            "JOIN pin_tag ON pin_tag.tagId = tag.tagId " +
             "WHERE pin_tag.pinId = :id")
     fun getTagsByPinId(id: Int): List<TagEntity>
 
