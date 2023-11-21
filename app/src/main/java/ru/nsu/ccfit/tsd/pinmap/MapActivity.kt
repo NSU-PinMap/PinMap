@@ -73,7 +73,7 @@ class MapActivity : AppCompatActivity() {
         val startPoint = GeoPoint(48.8583, 2.2944)
         mapController.setCenter(startPoint)
 
-        val pin = Pin(1, "test", map.mapCenter.latitude, map.mapCenter.longitude)
+        val pin = Pin("test", map.mapCenter.latitude, map.mapCenter.longitude)
         pin.description = "description of test"
         pin.mood = 2u
         pin.tags.add("test tag")
@@ -122,7 +122,7 @@ class MapActivity : AppCompatActivity() {
             //todo пинмаркер должен создаваться активити на основе списка пинов от контроллера, а не здесь
             // пинмаркер оставил здесь чтобы удобнее вызывать фрагмент; создаваемый пин это плейсхолдер,
             // тут потом будет пин из базы
-            val pin = Pin(228, "newly created pin", geoPoint.latitude, geoPoint.longitude)
+            val pin = Pin("newly created pin", geoPoint.latitude, geoPoint.longitude)
             val pinMarker = PinMarker(map, this, pin)
             pinMarker.position = map.mapCenter as GeoPoint?
             pinMarker.onMarkerClickDefault(pinMarker, map)
