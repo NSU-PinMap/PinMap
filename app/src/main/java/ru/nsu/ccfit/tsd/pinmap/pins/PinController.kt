@@ -21,7 +21,9 @@ class PinController private constructor(context: Context) {
     fun save(pin: Pin): Boolean {
         val newPin = pinStorage.save(pin) ?: return false
 
-        return pins.add(newPin)
+        //pins.add(newPin) TODO: replace with insert/add
+
+        return true
     }
 
     fun delete(pin: Pin) : Boolean {
@@ -39,7 +41,7 @@ class PinController private constructor(context: Context) {
             pins = pinStorage.getAllPins()
         }
 
-        return pins
+        return pinStorage.getAllPins()
     }
 
     fun getAllTags(): MutableList<String> {
