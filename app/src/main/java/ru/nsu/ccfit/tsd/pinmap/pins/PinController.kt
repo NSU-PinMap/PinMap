@@ -25,7 +25,13 @@ class PinController private constructor(context: Context) {
     }
 
     fun delete(pin: Pin) : Boolean {
-        return pinStorage.delete(pin)
+        val isDeleted = pinStorage.delete(pin)
+
+        if (isDeleted) {
+            pins = pinStorage.getAllPins()
+        }
+
+        return isDeleted
     }
 
     fun getAllPins(): MutableList<Pin> {
@@ -34,5 +40,9 @@ class PinController private constructor(context: Context) {
         }
 
         return pins
+    }
+
+    fun getAllTags(): MutableList<String> {
+        return pinStorage.getAllTags()
     }
 }
