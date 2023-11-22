@@ -64,6 +64,22 @@
         <action
             android:id="@+id/action_pinConstructorFragment_to_startFragment"
             app:destination="@id/startFragment" />
+        <argument
+            android:name="name"
+            app:argType="string"
+            android:defaultValue="default" />
+        <argument
+            android:name="latitude"
+            app:argType="float"
+            android:defaultValue="0.0" />
+        <argument
+            android:name="longitude"
+            app:argType="float"
+            android:defaultValue="0.0" />
+        <argument
+            android:name="desc"
+            app:argType="string"
+            android:defaultValue="default" />
     </fragment>
     <fragment
         android:id="@+id/pinsListFragment"

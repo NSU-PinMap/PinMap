@@ -1,17 +1,14 @@
 package ru.nsu.ccfit.tsd.pinmap
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.add
 import androidx.fragment.app.findFragment
-import androidx.fragment.app.replace
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import ru.nsu.ccfit.tsd.pinmap.databinding.ActivityMainBinding
-import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinConstructorBinding
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 
 class PinMarker(mapView: MapView, mapActivity_: MapActivity, pin_: Pin) : Marker(mapView) {
@@ -23,25 +20,18 @@ class PinMarker(mapView: MapView, mapActivity_: MapActivity, pin_: Pin) : Marker
 
     public override fun onMarkerClickDefault(marker: Marker?, mapView: MapView?): Boolean {
         // этот листенер вызывает окно редактирования маркера по нажатию
-        //todo фрагмент виден при старте приложения и я понятия не имею как это менять
-        // сейчас в мапактивити стоит костыль с меткой туду, который это решает
-        val constructorFragment = mapActivity.supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
+        val constructorFragment = mapActivity.supportFragmentManager.findFragmentById(R.id.fragmentContainerViewConstructorUI)
         if (constructorFragment != null) {
-            mapBinding.createdPin.visibility = View.GONE//todo не работает
-            //todo запретить двигать картой пока сидим во фрагменте
-            mapActivity.supportFragmentManager.beginTransaction()
-                .remove(constructorFragment)
-                .commit()
-        } else {
+            val navController = findNavController(constructorFragment)
+            //todo передавать информацию с пина в конструктор пинов?
             val bundle = Bundle()
-            //todo добавить id пина чтобы фрагмент отправил запрос в базу на редактирование пина
+            //todo добавить id пина чтобы фрагмент отправил запрос в базу на редактирование пина?
             bundle.putString("name", pin.name)
-            bundle.putDouble("latitude", pin.latitude)
-            bundle.putDouble("longitude", pin.longitude)
+            bundle.putFloat("latitude", pin.latitude.toFloat())
+            bundle.putFloat("longitude", pin.longitude.toFloat())
             bundle.putString("desc", pin.description)
-            mapActivity.supportFragmentManager.beginTransaction()
-                .add<PinConstructorFragment>(R.id.fragmentContainerView, args = bundle)
-                .commit()
+            navController.navigate(R.id.pinConstructorFragment, bundle)
+            //todo запретить двигать картой пока сидим во фрагменте или понять что это не надо
         }
 
         setInfoWindow(null) // это чтобы не показывать InfoWindow при нажатии на маркер

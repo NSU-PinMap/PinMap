@@ -104,13 +104,6 @@
                 android:inputType="date"
                 android:minHeight="48dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/tagsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </androidx.recyclerview.widget.RecyclerView>
-
             <EditText
                 android:id="@+id/moodText"
                 android:layout_width="match_parent"
@@ -120,12 +113,6 @@
                 android:minHeight="48dp"
                 android:text="Mood" />
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:src="@drawable/mountain_example" />
-
             <EditText
                 android:id="@+id/descriptionText"
                 android:layout_width="match_parent"
@@ -134,6 +121,30 @@
                 android:inputType="text"
                 android:minHeight="48dp"
                 android:text="Description" />
+
+            <TextView
+                android:id="@+id/latitudeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Latitude" />
+
+            <TextView
+                android:id="@+id/longitudeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Longitude" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tagsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/imagesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </LinearLayout>
     </ScrollView>

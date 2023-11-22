@@ -33,16 +33,7 @@ class MapActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //TODO это автоматически создаёт фрагмент?
         binding = ActivityMainBinding.inflate(layoutInflater)
-        //TODO это нужно чтобы фрагмент в начале не показывался;
-        // так делать категорически нельзя, но я не умею иначе пока что (как заставить фрагмент не появляться?)
-        /*val constructorFragment = this.supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
-        if (!constructorFragment!!.isHidden) {
-            this.supportFragmentManager.beginTransaction()
-                .hide(constructorFragment)
-                .commit();
-        }*/
 
         val res = this.resources
         val pinImage = ResourcesCompat.getDrawable(res, R.drawable.pin_marker, null)
@@ -73,7 +64,7 @@ class MapActivity : AppCompatActivity() {
         val startPoint = GeoPoint(48.8583, 2.2944)
         mapController.setCenter(startPoint)
 
-        val pin = Pin("test", map.mapCenter.latitude, map.mapCenter.longitude)
+        val pin = Pin("test", 48.8583, 2.2944)
         pin.description = "description of test"
         pin.mood = 2u
         pin.tags.add("test tag")
