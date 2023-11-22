@@ -3,6 +3,7 @@ package ru.nsu.ccfit.tsd.pinmap
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.preference.PreferenceManager
 import android.view.View
 import android.widget.Toast
@@ -17,6 +18,7 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import ru.nsu.ccfit.tsd.pinmap.databinding.ActivityMainBinding
+import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 
 class MapActivity : AppCompatActivity() {
 
@@ -24,6 +26,9 @@ class MapActivity : AppCompatActivity() {
     private lateinit var map: MapView
 
     private lateinit var binding: ActivityMainBinding
+    fun getBinding() : ActivityMainBinding{
+        return binding
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +64,15 @@ class MapActivity : AppCompatActivity() {
         val startPoint = GeoPoint(48.8583, 2.2944)
         mapController.setCenter(startPoint)
 
-        val testMarker = PinMarker(map)
+        val pin = Pin("test", 48.8583, 2.2944)
+        pin.description = "description of test"
+        pin.mood = 2u
+        pin.tags.add("test tag")
+        val testMarker = PinMarker(
+            binding.map,
+            this,
+            pin
+        )
         testMarker.position = GeoPoint(48.7583, 2.1944)
         testMarker.icon = pinImage
         testMarker.setAnchor(
@@ -67,6 +80,8 @@ class MapActivity : AppCompatActivity() {
             Marker.ANCHOR_BOTTOM
         )
         map.overlays.add(testMarker)
+
+        //todo надо на карту загружать все маркеры из базы вот тут
     }
 
     private fun setCancelMarkerFabClickListener() {
@@ -75,6 +90,7 @@ class MapActivity : AppCompatActivity() {
             binding.addMarkerFab.visibility = View.VISIBLE
             view.visibility = View.GONE
             binding.confirmMarkerFab.visibility = View.GONE
+            binding.creatingPin.visibility = View.GONE
         }
     }
 
@@ -86,26 +102,23 @@ class MapActivity : AppCompatActivity() {
 
             /* создать перманентный маркер тут не получается, т.к. случается onCreate() у мэйн активити, и всё обнуляется
             на это можно забить, если в конструкторе добавить маркер в базу, а в onCreate() вытащить его из базы
-            текущий код просто покажет маркер за момент до того как откроется активити по созданию маркера */
-            /*todo заменить активити фрагментами чтобы onCreate() не вызывать каждый раз;
+            впрочем, поскольку активити не обновляется при вызове конструктораui,
+            все новосозданные воспоминания будут не из базы, а сделанные тут; мб это разные сущности*/
+            /* todo заменить активити фрагментами чтобы onCreate() не вызывать каждый раз;
                 либо можно как-то поменять поведение активити при запуске интента, не уверен
                 использовать кэширование чтобы не кидать кучу запросов каждый раз; однако это если остальное успеем*/
-            val testMarker = PinMarker(binding.map)
-            testMarker.position = map.mapCenter as GeoPoint
-            testMarker.icon = ResourcesCompat.getDrawable(this.resources, R.drawable.pin_marker, null)
-            testMarker.setAnchor(
-                Marker.ANCHOR_CENTER,
-                Marker.ANCHOR_BOTTOM
-            )
-            binding.map.overlays.add(testMarker)
-            binding.map.invalidate()
+                // карту во фрагмент запихивать уже не надо!!!
 
-            // TODO: Вызывать PinConstructorActivity
-            Toast.makeText(
-                view.context,
-                "TODO: Вызывать PinConstructorActivity",
-                Toast.LENGTH_SHORT
-            ).show()
+            val geoPoint = map.mapCenter
+            //todo пинмаркер должен создаваться активити на основе списка пинов от контроллера, а не здесь
+            // пинмаркер оставил здесь чтобы удобнее вызывать фрагмент; создаваемый пин это плейсхолдер,
+            // тут потом будет пин из базы
+            val pin = Pin("newly created pin", geoPoint.latitude, geoPoint.longitude)
+            val pinMarker = PinMarker(map, this, pin)
+            pinMarker.position = map.mapCenter as GeoPoint?
+            pinMarker.onMarkerClickDefault(pinMarker, map)
+            binding.creatingPin.visibility = View.GONE
+            binding.createdPin.visibility = View.VISIBLE
         }
     }
 
@@ -114,6 +127,7 @@ class MapActivity : AppCompatActivity() {
             view.visibility = View.GONE
             binding.confirmMarkerFab.visibility = View.VISIBLE
             binding.cancelMarkerFab.visibility = View.VISIBLE
+            binding.creatingPin.visibility = View.VISIBLE
         }
     }
 

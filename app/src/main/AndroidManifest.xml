@@ -20,12 +20,6 @@
         android:theme="@style/Theme.PinMap"
         tools:targetApi="31">
         <activity
-            android:name=".PinEditActivity"
-            android:exported="false" />
-        <activity
-            android:name=".PinCreateActivity"
-            android:exported="false" />
-        <activity
             android:name=".MapActivity"
             android:exported="true">
             <intent-filter>
