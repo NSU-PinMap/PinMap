@@ -11,10 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinConstructorBinding
+import ru.nsu.ccfit.tsd.pinmap.pins.Pin
+import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 
 class PinConstructorFragment() : Fragment() {
     private var _binding: FragmentPinConstructorBinding? = null
     private val binding get() = _binding!!
+    private lateinit var pinController: PinController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +49,8 @@ class PinConstructorFragment() : Fragment() {
 
         //todo ещё локацию добавить надо
 
+        pinController = context?.let { PinController.getController(it) }!!
+
         return view
     }
 
@@ -68,7 +73,15 @@ class PinConstructorFragment() : Fragment() {
 
     private fun setSaveButtonListener() {
         binding.saveButton.setOnClickListener { v ->
-            //todo сюда Вова подключит контроллер
+            // TODO: Раскомментировать код, когда будет налажено изменение Pin
+            /*
+            val isSaved = pinController.save(pin)
+            if (isSaved) {
+                Toast.makeText(context, "Воспоминание сохранено", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Не удалось сохранить воспоминание", Toast.LENGTH_SHORT).show()
+            }
+            */
             Toast.makeText(context, "TODO: добавить сохранение пина", Toast.LENGTH_SHORT).show()
         }
     }

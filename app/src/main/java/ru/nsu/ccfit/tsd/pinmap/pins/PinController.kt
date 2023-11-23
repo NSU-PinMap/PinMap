@@ -1,37 +1,50 @@
 package ru.nsu.ccfit.tsd.pinmap.pins
 
-class PinController {
-    /* var pinStorage : PinStorage TODO: Подключить конкретный класс,
-                                           отвечающий за работу с базой данных, весь код
-                                           раскомментировать */
-    var pins : MutableList<Pin> = ArrayList() // pinStorage.getAllPins()
+import android.content.Context
+import ru.nsu.ccfit.tsd.pinmap.database.SQLitePinStorage
+
+class PinController private constructor(context: Context) {
+    companion object {
+        private var instance : PinController? = null
+
+        fun  getController(context: Context): PinController {
+            if (instance == null)
+                instance = PinController(context)
+
+            return instance!!
+        }
+    }
+
+    private var pinStorage : PinStorage = SQLitePinStorage(context)
+    private var pins : MutableList<Pin> = pinStorage.getAllPins()
 
     fun save(pin: Pin): Boolean {
-        /*
-        val newPin = pinStorage.save(pin)
+        val newPin = pinStorage.save(pin) ?: return false
 
-        if (newPin == null)
-            return false
-
-        pins.add(newPin)
+        //pins.add(newPin) TODO: replace with insert/add
 
         return true
-
-        */
-        return false
     }
 
     fun delete(pin: Pin) : Boolean {
-        // return pinStorage.delete(pin)
-        return false
+        val isDeleted = pinStorage.delete(pin)
+
+        if (isDeleted) {
+            pins = pinStorage.getAllPins()
+        }
+
+        return isDeleted
     }
 
     fun getAllPins(): MutableList<Pin> {
         if (pins.isEmpty()) {
-            // pins = pinStorage.getAllPins()
+            pins = pinStorage.getAllPins()
         }
 
-        return pins
+        return pinStorage.getAllPins()
     }
 
+    fun getAllTags(): MutableList<String> {
+        return pinStorage.getAllTags()
+    }
 }
