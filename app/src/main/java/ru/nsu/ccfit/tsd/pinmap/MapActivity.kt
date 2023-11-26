@@ -3,7 +3,6 @@ package ru.nsu.ccfit.tsd.pinmap
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.preference.PreferenceManager
 import android.view.View
 import android.widget.Toast
@@ -45,10 +44,6 @@ class MapActivity : AppCompatActivity() {
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION)
         requestPermissionsIfNecessary(permissions)
 
-        setAddMarkerFabClickListener()
-        setConfirmMarkerFabClickListener()
-        setCancelMarkerFabClickListener()
-
         val ctx = applicationContext
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
         setContentView(binding.root)
@@ -56,7 +51,6 @@ class MapActivity : AppCompatActivity() {
         map = binding.map
         map.setTileSource(TileSourceFactory.MAPNIK)
 
-        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.ALWAYS)
         map.setMultiTouchControls(true)
 
         val mapController = map.controller
@@ -64,7 +58,7 @@ class MapActivity : AppCompatActivity() {
         val startPoint = GeoPoint(48.8583, 2.2944)
         mapController.setCenter(startPoint)
 
-        val pin = Pin("test", 48.8583, 2.2944)
+        val pin = Pin("test", 48.7583, 2.1944)
         pin.description = "description of test"
         pin.mood = 2u
         pin.tags.add("test tag")
@@ -82,53 +76,6 @@ class MapActivity : AppCompatActivity() {
         map.overlays.add(testMarker)
 
         //todo надо на карту загружать все маркеры из базы вот тут
-    }
-
-    private fun setCancelMarkerFabClickListener() {
-        binding.cancelMarkerFab.setOnClickListener { view ->
-            Toast.makeText(view.context, "Создание маркера отменено!", Toast.LENGTH_SHORT).show()
-            binding.addMarkerFab.visibility = View.VISIBLE
-            view.visibility = View.GONE
-            binding.confirmMarkerFab.visibility = View.GONE
-            binding.creatingPin.visibility = View.GONE
-        }
-    }
-
-    private fun setConfirmMarkerFabClickListener() {
-        binding.confirmMarkerFab.setOnClickListener { view ->
-            binding.addMarkerFab.visibility = View.VISIBLE
-            view.visibility = View.GONE
-            binding.cancelMarkerFab.visibility = View.GONE
-
-            /* создать перманентный маркер тут не получается, т.к. случается onCreate() у мэйн активити, и всё обнуляется
-            на это можно забить, если в конструкторе добавить маркер в базу, а в onCreate() вытащить его из базы
-            впрочем, поскольку активити не обновляется при вызове конструктораui,
-            все новосозданные воспоминания будут не из базы, а сделанные тут; мб это разные сущности*/
-            /* todo заменить активити фрагментами чтобы onCreate() не вызывать каждый раз;
-                либо можно как-то поменять поведение активити при запуске интента, не уверен
-                использовать кэширование чтобы не кидать кучу запросов каждый раз; однако это если остальное успеем*/
-                // карту во фрагмент запихивать уже не надо!!!
-
-            val geoPoint = map.mapCenter
-            //todo пинмаркер должен создаваться активити на основе списка пинов от контроллера, а не здесь
-            // пинмаркер оставил здесь чтобы удобнее вызывать фрагмент; создаваемый пин это плейсхолдер,
-            // тут потом будет пин из базы
-            val pin = Pin("newly created pin", geoPoint.latitude, geoPoint.longitude)
-            val pinMarker = PinMarker(map, this, pin)
-            pinMarker.position = map.mapCenter as GeoPoint?
-            pinMarker.onMarkerClickDefault(pinMarker, map)
-            binding.creatingPin.visibility = View.GONE
-            binding.createdPin.visibility = View.VISIBLE
-        }
-    }
-
-    private fun setAddMarkerFabClickListener() {
-        binding.addMarkerFab.setOnClickListener { view ->
-            view.visibility = View.GONE
-            binding.confirmMarkerFab.visibility = View.VISIBLE
-            binding.cancelMarkerFab.visibility = View.VISIBLE
-            binding.creatingPin.visibility = View.VISIBLE
-        }
     }
 
     override fun onResume() {

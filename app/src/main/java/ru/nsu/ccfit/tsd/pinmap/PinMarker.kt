@@ -23,15 +23,23 @@ class PinMarker(mapView: MapView, mapActivity_: MapActivity, pin_: Pin) : Marker
         val constructorFragment = mapActivity.supportFragmentManager.findFragmentById(R.id.fragmentContainerViewConstructorUI)
         if (constructorFragment != null) {
             val navController = findNavController(constructorFragment)
-            //todo передавать информацию с пина в конструктор пинов?
+
             val bundle = Bundle()
-            //todo добавить id пина чтобы фрагмент отправил запрос в базу на редактирование пина?
+
+            //todo сделать обработку случаев когда некоторых полей нет
+            bundle.putBoolean("new", false)
             bundle.putString("name", pin.name)
             bundle.putFloat("latitude", pin.latitude.toFloat())
             bundle.putFloat("longitude", pin.longitude.toFloat())
+            if (pin.id != null) bundle.putInt("id", pin.id!!)//todo это норм?
+            bundle.putStringArray("tags", pin.tags.toTypedArray())//todo это работает?
             bundle.putString("desc", pin.description)
+            bundle.putByte("mood", pin.mood.toByte())//todo это норм?
+            bundle.putSerializable("date", pin.date)//todo это работает?
+
             navController.navigate(R.id.pinConstructorFragment, bundle)
-            //todo запретить двигать картой пока сидим во фрагменте или понять что это не надо
+
+            //todo запретить двигать картой
         }
 
         setInfoWindow(null) // это чтобы не показывать InfoWindow при нажатии на маркер

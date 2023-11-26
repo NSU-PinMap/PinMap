@@ -23,12 +23,24 @@ class PinConstructorFragment() : Fragment() {
         _binding = FragmentPinConstructorBinding.inflate(inflater, container, false)
         val view = binding.root
         val bundle = arguments // получение аргументов из replace
+
+        //todo сделать обработку случаев когда некоторых полей нет
         if (bundle != null) {
-            binding.nameText.setText(bundle.getString("name"))
-            binding.latitudeText.text = bundle.getFloat("latitude").toString()
-            binding.longitudeText.text = bundle.getFloat("longitude").toString()
-            binding.descriptionText.setText(bundle.getString("desc"))
-            //todo остальное из пина тоже протащить
+            if (bundle.getBoolean("new")) {
+                binding.nameText.setText(bundle.getString("name"))
+                binding.latitudeText.text = bundle.getFloat("latitude").toString()
+                binding.longitudeText.text = bundle.getFloat("longitude").toString()
+            } else {
+                binding.nameText.setText(bundle.getString("name"))
+                binding.latitudeText.text = bundle.getFloat("latitude").toString()
+                binding.longitudeText.text = bundle.getFloat("longitude").toString()
+                binding.descriptionText.setText(bundle.getString("desc"))
+                //todo остальное из пина тоже протащить
+
+                /*bundle.putStringArray("tags", pin.tags.toTypedArray())//todo это работает?
+                bundle.putByte("mood", pin.mood.toByte())//todo это норм?
+                bundle.putSerializable("date", pin.date)//todo это работает?*/
+            }
         }
 
         setBackButtonListener()
