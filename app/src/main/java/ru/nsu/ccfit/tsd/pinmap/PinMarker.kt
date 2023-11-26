@@ -1,12 +1,7 @@
 package ru.nsu.ccfit.tsd.pinmap
 
 import android.os.Bundle
-import android.view.View
-import androidx.fragment.app.add
-import androidx.fragment.app.findFragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
-import androidx.navigation.fragment.findNavController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
@@ -32,14 +27,14 @@ class PinMarker(mapView: MapView, mapActivity_: MapActivity, pin_: Pin) : Marker
             bundle.putFloat("latitude", pin.latitude.toFloat())
             bundle.putFloat("longitude", pin.longitude.toFloat())
             if (pin.id != null) bundle.putInt("id", pin.id!!)//todo это норм?
-            bundle.putStringArray("tags", pin.tags.toTypedArray())//todo это работает?
+            bundle.putStringArray("tags", pin.tags.toTypedArray())//todo это работает? надо проверить во фрагменте
             bundle.putString("desc", pin.description)
-            bundle.putByte("mood", pin.mood.toByte())//todo это норм?
-            bundle.putSerializable("date", pin.date)//todo это работает?
+            bundle.putByte("mood", pin.mood.toByte())//todo это норм? надо проверить во фрагменте
+            bundle.putSerializable("date", pin.date)//todo это работает? надо проверить во фрагменте
 
             navController.navigate(R.id.pinConstructorFragment, bundle)
 
-            //todo запретить двигать картой
+            //todo запретить двигать картой пока находимся не в StartFragment
         }
 
         setInfoWindow(null) // это чтобы не показывать InfoWindow при нажатии на маркер

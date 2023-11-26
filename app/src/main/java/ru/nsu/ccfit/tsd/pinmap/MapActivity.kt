@@ -4,8 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.preference.PreferenceManager
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -37,9 +35,6 @@ class MapActivity : AppCompatActivity() {
         val res = this.resources
         val pinImage = ResourcesCompat.getDrawable(res, R.drawable.pin_marker, null)
 
-        /* перед тем как отрисовывать карту рекомендуется сначала получить разрешения
-         ACCESS_FINE_LOCATION нужен чтобы показывать текущее местоположение
-         WRITE_EXTERNAL_STORAGE нужен чтобы показывать карту (требование osmdroid) */
         val permissions: Array<String> =
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION)
         requestPermissionsIfNecessary(permissions)
@@ -52,12 +47,15 @@ class MapActivity : AppCompatActivity() {
         map.setTileSource(TileSourceFactory.MAPNIK)
 
         map.setMultiTouchControls(true)
+        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
 
         val mapController = map.controller
+        //todo стартовые точки настраивайте как хотите
         mapController.setZoom(9.5)
         val startPoint = GeoPoint(48.8583, 2.2944)
         mapController.setCenter(startPoint)
 
+        //todo это тестовый пин, его надо будет удалить
         val pin = Pin("test", 48.7583, 2.1944)
         pin.description = "description of test"
         pin.mood = 2u
@@ -75,7 +73,8 @@ class MapActivity : AppCompatActivity() {
         )
         map.overlays.add(testMarker)
 
-        //todo надо на карту загружать все маркеры из базы вот тут
+        //todo надо на карту загружать все маркеры из базы вот тут;
+        // надо будет породить для каждого маркера по объекту PinMarker и Pin (Pin внутри PinMarker)
     }
 
     override fun onResume() {

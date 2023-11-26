@@ -22,24 +22,29 @@ class PinConstructorFragment() : Fragment() {
     ): View? {
         _binding = FragmentPinConstructorBinding.inflate(inflater, container, false)
         val view = binding.root
-        val bundle = arguments // получение аргументов из replace
+        val bundle = arguments
 
-        //todo сделать обработку случаев когда некоторых полей нет
+        //todo сделать обработку случаев когда некоторые поля null или не имеют осмысленных значений
         if (bundle != null) {
-            if (bundle.getBoolean("new")) {
+
+            if (bundle.getBoolean("new")) { // конструктор вызван по созданию нового пина
+
                 binding.nameText.setText(bundle.getString("name"))
                 binding.latitudeText.text = bundle.getFloat("latitude").toString()
                 binding.longitudeText.text = bundle.getFloat("longitude").toString()
-            } else {
+
+            } else { // конструктор вызван по нажатию на существующий пин
+
                 binding.nameText.setText(bundle.getString("name"))
                 binding.latitudeText.text = bundle.getFloat("latitude").toString()
                 binding.longitudeText.text = bundle.getFloat("longitude").toString()
                 binding.descriptionText.setText(bundle.getString("desc"))
-                //todo остальное из пина тоже протащить
 
-                /*bundle.putStringArray("tags", pin.tags.toTypedArray())//todo это работает?
-                bundle.putByte("mood", pin.mood.toByte())//todo это норм?
-                bundle.putSerializable("date", pin.date)//todo это работает?*/
+                //todo я планировал использовать recyclerView для тегов и фотографий, мб это не лучшая идея
+                // сейчас однако в xml фрагмента лежат они
+
+                //todo тут осталось вытащить и показать настроение, тэги, дату и фотографии
+                //todo ещё надо придумать как красиво показывать локацию (сейчас это просто две координаты...)
             }
         }
 
@@ -54,9 +59,8 @@ class PinConstructorFragment() : Fragment() {
         disableEdit(binding.dateText)
         disableEdit(binding.moodText)
         disableEdit(binding.descriptionText)
-        //todo выключить редактирование позиции и картинки
+        //todo выключить редактирование остального
 
-        //todo ещё локацию добавить надо
 
         return view
     }
@@ -123,6 +127,7 @@ class PinConstructorFragment() : Fragment() {
     // это нужно чтобы вообще иметь возможность создать фрагмент?
     // вроде и без него правда что-то создаётся
     // но через эту хрень явно прокидываются аргументы для создания фрагмента
+    // если это удалить то программа жалуется вроде :(
     companion object {
         private const val NAME = "name"
 

@@ -9,13 +9,9 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import ru.nsu.ccfit.tsd.pinmap.MapActivity
-import ru.nsu.ccfit.tsd.pinmap.PinMarker
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentStartBinding
-import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 
 class StartFragment : Fragment() {
 
@@ -47,12 +43,14 @@ class StartFragment : Fragment() {
     }
 
     private fun setZoomInFabClickListener() {
+        //todo этой кнопке надо иконку правильную сделать
         binding.zoomInFab.setOnClickListener { view ->
             view.rootView.findViewById<MapView>(R.id.map).controller.zoomIn()
         }
     }
 
     private fun setZoomOutFabClickListener() {
+        //todo этой кнопке надо иконку правильную сделать
         binding.zoomOutFab.setOnClickListener { view ->
             view.rootView.findViewById<MapView>(R.id.map).controller.zoomOut()
         }
@@ -81,16 +79,13 @@ class StartFragment : Fragment() {
         binding.confirmMarkerFab.setOnClickListener { view ->
             val map = view.rootView.findViewById<MapView>(R.id.map)
 
-            val geoPoint = map.mapCenter
-            val pin = Pin("Новое воспоминание", geoPoint.latitude, geoPoint.longitude)
-            val pinMarker = PinMarker(map, activity as MapActivity, pin)//todo это активити это вообще то?
-            pinMarker.position = map.mapCenter as GeoPoint? // это на всякий случай чтобы карта не улетела в (0, 0)
-
             val bundle = Bundle()
             bundle.putBoolean("new", true)
-            bundle.putString("name", pin.name)
-            bundle.putFloat("latitude", pin.latitude.toFloat())
-            bundle.putFloat("longitude", pin.longitude.toFloat())
+            bundle.putString("name", "Новое воспоминание")
+            val geoPoint = map.mapCenter
+            bundle.putFloat("latitude", geoPoint.latitude.toFloat())
+            bundle.putFloat("longitude", geoPoint.longitude.toFloat())
+
             val navController = NavHostFragment.findNavController(this)
             navController.navigate(R.id.pinConstructorFragment, bundle)
         }
