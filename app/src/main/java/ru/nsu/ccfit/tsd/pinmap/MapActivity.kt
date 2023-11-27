@@ -16,11 +16,13 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import ru.nsu.ccfit.tsd.pinmap.databinding.ActivityMainBinding
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
+import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 
 class MapActivity : AppCompatActivity() {
 
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map: MapView
+    private lateinit var pinController: PinController
 
     private lateinit var binding: ActivityMainBinding
     fun getBinding() : ActivityMainBinding{
@@ -75,6 +77,8 @@ class MapActivity : AppCompatActivity() {
 
         //todo надо на карту загружать все маркеры из базы вот тут;
         // надо будет породить для каждого маркера по объекту PinMarker и Pin (Pin внутри PinMarker)
+        pinController = PinController.getController(applicationContext)
+
     }
 
     override fun onResume() {
