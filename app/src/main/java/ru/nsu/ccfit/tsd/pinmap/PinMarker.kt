@@ -35,6 +35,7 @@ class PinMarker(mapView: MapView, mapActivity_: MapActivity, pin_: Pin) : Marker
             navController.navigate(R.id.pinConstructorFragment, bundle)
 
             //todo запретить двигать картой пока находимся не в StartFragment
+            //mapBinding.map.controller.
         }
 
         setInfoWindow(null) // это чтобы не показывать InfoWindow при нажатии на маркер

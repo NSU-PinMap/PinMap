@@ -18,6 +18,8 @@ class PinConstructorFragment() : Fragment() {
     private var _binding: FragmentPinConstructorBinding? = null
     private val binding get() = _binding!!
     private lateinit var pinController: PinController
+    private lateinit var pin: Pin
+    private var isPinNew: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,21 +29,36 @@ class PinConstructorFragment() : Fragment() {
         val view = binding.root
         val bundle = arguments
 
-        //todo сделать обработку случаев когда некоторые поля null или не имеют осмысленных значений
         if (bundle != null) {
 
-            if (bundle.getBoolean("new")) { // конструктор вызван по созданию нового пина
+            val name = bundle.getString("name")
+            val safeName : String
+            if (name != null) {
+                safeName = name
+            } else {
+                safeName = ""
+            }
+            binding.nameText.setText(safeName)
 
-                binding.nameText.setText(bundle.getString("name"))
-                binding.latitudeText.text = bundle.getFloat("latitude").toString()
-                binding.longitudeText.text = bundle.getFloat("longitude").toString()
+            val latitude = bundle.getFloat("latitude")
+            binding.latitudeText.text = latitude.toString()
 
-            } else { // конструктор вызван по нажатию на существующий пин
+            val longitude = bundle.getFloat("longitude")
+            binding.longitudeText.text = longitude.toString()
 
-                binding.nameText.setText(bundle.getString("name"))
-                binding.latitudeText.text = bundle.getFloat("latitude").toString()
-                binding.longitudeText.text = bundle.getFloat("longitude").toString()
+            pin = Pin(safeName, latitude.toDouble(), longitude.toDouble())
+
+            if (!bundle.getBoolean("new")) { // конструктор вызван по нажатию на существующий пин
+
+                isPinNew = false
+                binding.deleteButton.visibility = View.VISIBLE
+
+                // инициализация объекта на случай его удаления
+                pin.id = bundle.getInt("id")
+
                 binding.descriptionText.setText(bundle.getString("desc"))
+
+                //todo сделать обработку случаев когда некоторые поля null или не имеют осмысленных значений
 
                 //todo я планировал использовать recyclerView для тегов и фотографий, мб это не лучшая идея
                 // сейчас однако в xml фрагмента лежат они
@@ -71,46 +88,55 @@ class PinConstructorFragment() : Fragment() {
     }
 
     private fun disableEdit(view : EditText) {
-        view.setInputType(InputType.TYPE_NULL)
+        view.inputType = InputType.TYPE_NULL
         view.setTextIsSelectable(false)
         //todo убрать клавиатуру; она убирается на встроенную кнопку "назад" кстати
     }
     private fun enableEdit(view : EditText, inputType : Int) {
-        view.setInputType(inputType)
+        view.inputType = inputType
         view.setTextIsSelectable(true)
     }
 
     private fun setDeleteButtonListener() {
         binding.deleteButton.setOnClickListener { v ->
-            //todo сюда подключить контроллер
-
-            Toast.makeText(context, "TODO: добавить удаление пина", Toast.LENGTH_SHORT).show()
+            val isDeleted = pinController.delete(pin)
+            if (isDeleted) {
+                Toast.makeText(context, "Воспоминание удалено", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Не удалось удалить воспоминание", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun setSaveButtonListener() {
         binding.saveButton.setOnClickListener { v ->
+            //todo заново считать всё с полей ввода и сунуть в пин, и потом уже сохранить
+            val name = binding.nameText.text.toString()
+            val latitude = binding.latitudeText.text.toString().toDouble()
+            val longitude = binding.longitudeText.text.toString().toDouble()
+            val pin = Pin(name, latitude, longitude)
 
-            //todo сюда подключить контроллер:
+            //todo
+            //pin.mood = binding.moodText.text.toString().toUByte()
+            //pin.tags
+            //pin.id
+            //pin.description = binding.descriptionText.text.toString()
+            //pin.date
 
-            // TODO: Раскомментировать код, когда будет налажено изменение Pin
-            /*
             val isSaved = pinController.save(pin) //сюда надо подставить нужный пин; аналогичный код для делете
             if (isSaved) {
                 Toast.makeText(context, "Воспоминание сохранено", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, "Не удалось сохранить воспоминание", Toast.LENGTH_SHORT).show()
             }
-            */
 
-            Toast.makeText(context, "TODO: добавить сохранение пина", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun setCancelButtonListener() {
         binding.cancelButton.setOnClickListener { v ->
             binding.editButton.visibility = View.VISIBLE
-            binding.deleteButton.visibility = View.VISIBLE
+            if (!isPinNew) binding.deleteButton.visibility = View.VISIBLE
             binding.saveButton.visibility = View.GONE
             binding.cancelButton.visibility = View.GONE
             disableEdit(binding.nameText)
