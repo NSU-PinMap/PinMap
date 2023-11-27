@@ -25,13 +25,30 @@ class PinConstructorFragment() : Fragment() {
     ): View? {
         _binding = FragmentPinConstructorBinding.inflate(inflater, container, false)
         val view = binding.root
-        val bundle = arguments // получение аргументов из replace
+        val bundle = arguments
+
+        //todo сделать обработку случаев когда некоторые поля null или не имеют осмысленных значений
         if (bundle != null) {
-            binding.nameText.setText(bundle.getString("name"))
-            binding.latitudeText.text = bundle.getFloat("latitude").toString()
-            binding.longitudeText.text = bundle.getFloat("longitude").toString()
-            binding.descriptionText.setText(bundle.getString("desc"))
-            //todo остальное из пина тоже протащить
+
+            if (bundle.getBoolean("new")) { // конструктор вызван по созданию нового пина
+
+                binding.nameText.setText(bundle.getString("name"))
+                binding.latitudeText.text = bundle.getFloat("latitude").toString()
+                binding.longitudeText.text = bundle.getFloat("longitude").toString()
+
+            } else { // конструктор вызван по нажатию на существующий пин
+
+                binding.nameText.setText(bundle.getString("name"))
+                binding.latitudeText.text = bundle.getFloat("latitude").toString()
+                binding.longitudeText.text = bundle.getFloat("longitude").toString()
+                binding.descriptionText.setText(bundle.getString("desc"))
+
+                //todo я планировал использовать recyclerView для тегов и фотографий, мб это не лучшая идея
+                // сейчас однако в xml фрагмента лежат они
+
+                //todo тут осталось вытащить и показать настроение, тэги, дату и фотографии
+                //todo ещё надо придумать как красиво показывать локацию (сейчас это просто две координаты...)
+            }
         }
 
         setBackButtonListener()
@@ -45,9 +62,8 @@ class PinConstructorFragment() : Fragment() {
         disableEdit(binding.dateText)
         disableEdit(binding.moodText)
         disableEdit(binding.descriptionText)
-        //todo выключить редактирование позиции и картинки
+        //todo выключить редактирование остального
 
-        //todo ещё локацию добавить надо
 
         pinController = context?.let { PinController.getController(it) }!!
 
@@ -66,22 +82,27 @@ class PinConstructorFragment() : Fragment() {
 
     private fun setDeleteButtonListener() {
         binding.deleteButton.setOnClickListener { v ->
-            //todo сюда Вова подключит контроллер
+            //todo сюда подключить контроллер
+
             Toast.makeText(context, "TODO: добавить удаление пина", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun setSaveButtonListener() {
         binding.saveButton.setOnClickListener { v ->
+
+            //todo сюда подключить контроллер:
+
             // TODO: Раскомментировать код, когда будет налажено изменение Pin
             /*
-            val isSaved = pinController.save(pin)
+            val isSaved = pinController.save(pin) //сюда надо подставить нужный пин; аналогичный код для делете
             if (isSaved) {
                 Toast.makeText(context, "Воспоминание сохранено", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, "Не удалось сохранить воспоминание", Toast.LENGTH_SHORT).show()
             }
             */
+
             Toast.makeText(context, "TODO: добавить сохранение пина", Toast.LENGTH_SHORT).show()
         }
     }
@@ -124,6 +145,7 @@ class PinConstructorFragment() : Fragment() {
     // это нужно чтобы вообще иметь возможность создать фрагмент?
     // вроде и без него правда что-то создаётся
     // но через эту хрень явно прокидываются аргументы для создания фрагмента
+    // если это удалить то программа жалуется вроде :(
     companion object {
         private const val NAME = "name"
 
