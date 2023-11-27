@@ -106,6 +106,7 @@ class StartFragment : Fragment() {
         val pinImage = ResourcesCompat.getDrawable(res, R.drawable.pin_marker, null)
         map.overlays.forEach {
             map.overlays.remove(it)
+            map.invalidate()
         }
         for (pin in pins){
             val marker = PinMarker(map, activity as MapActivity, pin)

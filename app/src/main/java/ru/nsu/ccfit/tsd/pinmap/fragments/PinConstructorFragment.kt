@@ -48,7 +48,7 @@ class PinConstructorFragment() : Fragment() {
 
             pin = Pin(safeName, latitude.toDouble(), longitude.toDouble())
 
-            if (!bundle.getBoolean("new")) { // конструктор вызван по нажатию на существующий пин
+            if (!(bundle.getBoolean("new"))) { // конструктор вызван по нажатию на существующий пин
 
                 isPinNew = false
                 binding.deleteButton.visibility = View.VISIBLE
@@ -65,6 +65,8 @@ class PinConstructorFragment() : Fragment() {
 
                 //todo тут осталось вытащить и показать настроение, тэги, дату и фотографии
                 //todo ещё надо придумать как красиво показывать локацию (сейчас это просто две координаты...)
+            } else {
+                binding.deleteButton.visibility = View.GONE
             }
         }
 
