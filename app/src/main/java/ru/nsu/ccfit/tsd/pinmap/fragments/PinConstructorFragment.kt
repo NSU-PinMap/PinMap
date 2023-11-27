@@ -77,14 +77,15 @@ class PinConstructorFragment() : Fragment() {
 
     private fun setDeleteButtonListener() {
         binding.deleteButton.setOnClickListener { v ->
-            //todo сюда Вова подключит контроллер
+            //todo сюда подключить контроллер
+
             Toast.makeText(context, "TODO: добавить удаление пина", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun setSaveButtonListener() {
         binding.saveButton.setOnClickListener { v ->
-            //todo сюда Вова подключит контроллер
+            //todo сюда подключить контроллер
             Toast.makeText(context, "TODO: добавить сохранение пина", Toast.LENGTH_SHORT).show()
         }
     }
