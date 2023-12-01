@@ -1,16 +1,21 @@
 package ru.nsu.ccfit.tsd.pinmap.fragments
 
+import android.content.Context.INPUT_METHOD_SERVICE
+import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinConstructorBinding
+import ru.nsu.ccfit.tsd.pinmap.fragments.adapters.ImageAdapter
+import ru.nsu.ccfit.tsd.pinmap.fragments.adapters.TagAdapter
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 
@@ -28,6 +33,19 @@ class PinConstructorFragment() : Fragment() {
         _binding = FragmentPinConstructorBinding.inflate(inflater, container, false)
         val view = binding.root
         val bundle = arguments
+
+        val imageDataset = arrayListOf<Uri?>(null, null, null)
+        val imageAdapter = ImageAdapter(imageDataset)
+        binding.imagesRecyclerView.adapter = imageAdapter
+        binding.imagesRecyclerView.layoutManager = LinearLayoutManager(context)
+        //todo огромное расстояние между картинками; не знаю как чинить
+        //todo нужно сделать нормальное получение картинок по Uri
+
+        val tagDataset = arrayListOf<String?>(null, null, null)
+        val tagAdapter = TagAdapter(tagDataset)
+        binding.tagsRecyclerView.adapter = tagAdapter
+        binding.tagsRecyclerView.layoutManager = LinearLayoutManager(context)
+        //todo тут нужно доработать получение тэгов
 
         if (bundle != null) {
 
@@ -58,14 +76,16 @@ class PinConstructorFragment() : Fragment() {
 
                 binding.descriptionText.setText(bundle.getString("desc"))
 
+                binding.moodSlider.value = bundle.getByte("mood").toFloat()
+
                 //todo сделать обработку случаев когда некоторые поля null или не имеют осмысленных значений
 
                 //todo я планировал использовать recyclerView для тегов и фотографий, мб это не лучшая идея
                 // сейчас однако в xml фрагмента лежат они
 
                 //todo тут осталось вытащить и показать настроение, тэги, дату и фотографии
-                //todo ещё надо придумать как красиво показывать локацию (сейчас это просто две координаты...)
-            } else {
+                //todo надо придумать как красиво показывать локацию (сейчас это просто две координаты...)
+            } else { // конструктор вызван по созданию нового пина; его нельзя удалять из базы, ибо его там ещё нет!
                 binding.deleteButton.visibility = View.GONE
             }
         }
@@ -77,26 +97,53 @@ class PinConstructorFragment() : Fragment() {
         setDeleteButtonListener()
 
         // чтобы нельзя было редактировать при открытии фрагмента
-        disableEdit(binding.nameText)
-        disableEdit(binding.dateText)
-        disableEdit(binding.moodText)
-        disableEdit(binding.descriptionText)
-        //todo выключить редактирование остального
-
+        disableEdit()
 
         pinController = context?.let { PinController.getController(it) }!!
 
         return view
     }
 
-    private fun disableEdit(view : EditText) {
-        view.inputType = InputType.TYPE_NULL
-        view.setTextIsSelectable(false)
-        //todo убрать клавиатуру; она убирается на встроенную кнопку "назад" кстати
+    private fun disableEdit() {
+        binding.latitudeText.inputType = InputType.TYPE_NULL
+        binding.latitudeText.setTextIsSelectable(false)
+
+        binding.longitudeText.inputType = InputType.TYPE_NULL
+        binding.longitudeText.setTextIsSelectable(false)
+
+        binding.descriptionText.inputType = InputType.TYPE_NULL
+        binding.descriptionText.setTextIsSelectable(false)
+
+        binding.nameText.inputType = InputType.TYPE_NULL
+        binding.nameText.setTextIsSelectable(false)
+
+        binding.dateText.inputType = InputType.TYPE_NULL
+        binding.dateText.setTextIsSelectable(false)
+
+        // скрываем клавиатуру
+        val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
+
+        //todo выключить редактирование локации (когда редактирование будет красивым), тегов, картинок и настроения
     }
-    private fun enableEdit(view : EditText, inputType : Int) {
-        view.inputType = inputType
-        view.setTextIsSelectable(true)
+
+    private fun enableEdit() {
+        binding.latitudeText.inputType = InputType.TYPE_CLASS_NUMBER
+        binding.latitudeText.setTextIsSelectable(true)
+
+        binding.longitudeText.inputType = InputType.TYPE_CLASS_NUMBER
+        binding.longitudeText.setTextIsSelectable(true)
+
+        binding.descriptionText.inputType = InputType.TYPE_CLASS_TEXT
+        binding.descriptionText.setTextIsSelectable(true)
+
+        binding.nameText.inputType = InputType.TYPE_CLASS_TEXT
+        binding.nameText.setTextIsSelectable(true)
+
+        binding.dateText.inputType = InputType.TYPE_CLASS_DATETIME
+        binding.dateText.setTextIsSelectable(true)
+
+        //todo включить редактирование локации (когда редактирование будет красивым), тегов, картинок и настроения
     }
 
     private fun setDeleteButtonListener() {
@@ -112,18 +159,21 @@ class PinConstructorFragment() : Fragment() {
 
     private fun setSaveButtonListener() {
         binding.saveButton.setOnClickListener { v ->
-            //todo заново считать всё с полей ввода и сунуть в пин, и потом уже сохранить
+
+            pinController.delete(pin)
+
+            // надо заново считать всё с полей ввода и сунуть в пин, и потом уже сохранить
             val name = binding.nameText.text.toString()
             val latitude = binding.latitudeText.text.toString().toDouble()
             val longitude = binding.longitudeText.text.toString().toDouble()
             val pin = Pin(name, latitude, longitude)
 
-            //todo
-            //pin.mood = binding.moodText.text.toString().toUByte()
-            //pin.tags
-            //pin.id
-            //pin.description = binding.descriptionText.text.toString()
-            //pin.date
+            pin.mood = binding.moodSlider.value.toInt().toUByte()
+            //pin.tags //todo
+            //pin.id //todo
+            pin.description = binding.descriptionText.text.toString()
+            //pin.date = binding.dateText.text. //todo
+            //todo картинки ещё
 
             val isSaved = pinController.save(pin) //сюда надо подставить нужный пин; аналогичный код для делете
             if (isSaved) {
@@ -141,11 +191,7 @@ class PinConstructorFragment() : Fragment() {
             if (!isPinNew) binding.deleteButton.visibility = View.VISIBLE
             binding.saveButton.visibility = View.GONE
             binding.cancelButton.visibility = View.GONE
-            disableEdit(binding.nameText)
-            disableEdit(binding.dateText)
-            disableEdit(binding.moodText)
-            disableEdit(binding.descriptionText)
-            //todo выключить редактирование локации, тегов и картинки
+            disableEdit()
         }
     }
 
@@ -155,11 +201,7 @@ class PinConstructorFragment() : Fragment() {
             binding.deleteButton.visibility = View.GONE
             binding.saveButton.visibility = View.VISIBLE
             binding.cancelButton.visibility = View.VISIBLE
-            enableEdit(binding.nameText, InputType.TYPE_CLASS_TEXT)
-            enableEdit(binding.dateText, InputType.TYPE_CLASS_DATETIME)
-            enableEdit(binding.moodText, InputType.TYPE_CLASS_TEXT)
-            enableEdit(binding.descriptionText, InputType.TYPE_CLASS_TEXT)
-            //todo включить редактирование локации, тегов и картинки
+            enableEdit()
         }
     }
 

@@ -49,14 +49,13 @@ class StartFragment : Fragment() {
     }
 
     private fun setZoomInFabClickListener() {
-        //todo этой кнопке надо иконку правильную сделать
+        //todo этой кнопке надо размер иконки поменять чуть-чуть
         binding.zoomInFab.setOnClickListener { view ->
             view.rootView.findViewById<MapView>(R.id.map).controller.zoomIn()
         }
     }
 
     private fun setZoomOutFabClickListener() {
-        //todo этой кнопке надо иконку правильную сделать
         binding.zoomOutFab.setOnClickListener { view ->
             view.rootView.findViewById<MapView>(R.id.map).controller.zoomOut()
         }
