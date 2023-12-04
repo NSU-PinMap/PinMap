@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupActionBarWithNavController
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -79,6 +81,10 @@ class MapActivity : AppCompatActivity() {
         // надо будет породить для каждого маркера по объекту PinMarker и Pin (Pin внутри PinMarker)
         pinController = PinController.getController(applicationContext)
 
+        // Если вы решите передвинуть эти две строчки кода, имейте в виду, что от их расположения зависит работоспособность приложения
+        // (буквально, что-то должно проинициализироваться до вызова setupActionBarWithNavController, но я не знаю, в чём именно дело)
+        val navController = findNavController(R.id.fragmentContainerViewConstructorUI)
+        setupActionBarWithNavController(navController)
     }
 
     override fun onResume() {
@@ -128,5 +134,10 @@ class MapActivity : AppCompatActivity() {
             )
         }
     }
-
+/*
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.fragmentContainerViewConstructorUI)
+        return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+*/
 }
