@@ -134,10 +134,10 @@ class MapActivity : AppCompatActivity() {
             )
         }
     }
-/*
+
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.fragmentContainerViewConstructorUI)
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
-*/
+
 }

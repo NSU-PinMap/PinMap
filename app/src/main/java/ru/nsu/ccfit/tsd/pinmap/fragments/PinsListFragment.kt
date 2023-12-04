@@ -17,6 +17,7 @@ import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinsListBinding
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 import java.util.Collections
+import java.util.Date
 
 class PinsListFragment : Fragment() {
     private var _binding: FragmentPinsListBinding? = null
@@ -38,14 +39,16 @@ class PinsListFragment : Fragment() {
 
         // Проверка корректности выгрузки пинов и появления их в recycler view
 /*
-                val pin1 = Pin("pin1", 47.6, 2.1944)
-                val pin2 = Pin("pin2", 47.0, 2.1945)
+                //val pin1 = Pin("pin1", 47.6, 2.1944)
+                val pin4 = Pin("pin4", 47.0, 2.1970)
+                pin4.date = Date(11, 5, 7)
 
-                pinController.delete(pin1)
-                pinController.delete(pin2)
 
-                pinController.save(pin1)
-                pinController.save(pin2)
+                //pinController.delete(pin1)
+                //pinController.delete(pin2)
+
+                pinController.save(pin4)
+                //pinController.save(pin2)
 */
         // Проверка корректности добавления пина в recycler view (появляется при переоткрытии фрагмента)
         // !!!!!!!!!!!!!!! Этой кнопки уже нет в xml-файле
