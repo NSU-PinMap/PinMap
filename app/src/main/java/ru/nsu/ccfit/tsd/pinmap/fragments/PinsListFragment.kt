@@ -23,13 +23,13 @@ class PinsListFragment : Fragment() {
     private var _binding: FragmentPinsListBinding? = null
     private val binding get() = _binding!!
     private lateinit var pinController: PinController
+    private lateinit var pinAdapter: PinAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Retrieve and inflate the layout for this fragment
+    ): View {
         _binding = FragmentPinsListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -40,16 +40,20 @@ class PinsListFragment : Fragment() {
         // Проверка корректности выгрузки пинов и появления их в recycler view
 /*
                 //val pin1 = Pin("pin1", 47.6, 2.1944)
-                val pin4 = Pin("pin4", 47.0, 2.1970)
-                pin4.date = Date(11, 5, 7)
+                val pin6 = Pin("pin6", 48.0, 2.1270)
+                pin6.date = Date(9, 5, 7)
+
+                // вот это не прокатило, там они только уже готовые из бд берутся?
+                pin6.tags = mutableListOf("tag1", "tag2")
 
 
                 //pinController.delete(pin1)
                 //pinController.delete(pin2)
 
-                pinController.save(pin4)
+                pinController.save(pin6)
                 //pinController.save(pin2)
 */
+
         // Проверка корректности добавления пина в recycler view (появляется при переоткрытии фрагмента)
         // !!!!!!!!!!!!!!! Этой кнопки уже нет в xml-файле
         // TODO: перепроверить в связи с внесёнными в адаптер изменениями
@@ -58,13 +62,14 @@ class PinsListFragment : Fragment() {
             val pin3 = Pin("pin3", 47.0, 2.1945)
             pinController.save(pin3)
         }
-         */
+*/
+        pinAdapter = PinAdapter(pinController.getAllPins())
 
         val recyclerView = binding.rcPins
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         // Передаём пины из pinController в PinAdapter
-        recyclerView.adapter = PinAdapter(pinController.getAllPins())
+        recyclerView.adapter = pinAdapter
 
         val controller = findNavController()
 
@@ -74,26 +79,25 @@ class PinsListFragment : Fragment() {
         val sortMenu = view.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
         sortMenu.setAdapter(arrayAdapter)
 
-        var previousOptionsPosition = 0
+        var previousOptionsPosition = -1
 
         sortMenu.setOnItemClickListener { _, _, position, _ ->
             // value -- это String-значение выбранной опции, а position -- её int-номер в менюшке
             val value = arrayAdapter.getItem(position) ?: ""
 
+            // TODO: сделать что-нибудь с этой страшной чередой if'ов
             if (position != previousOptionsPosition) {
-                val adapter = PinAdapter(pinController.getAllPins())
-
                 if (value == "алфавиту [А->Я]")
-                    adapter.sortAlphabetically()
+                    pinAdapter.sortAlphabetically()
 
                 if (value == "алфавиту [Я->А]")
-                    adapter.sortDescAlphabetically()
+                    pinAdapter.sortDescAlphabetically()
 
                 if (value == "дате [старые->новые]")
-                    adapter.sortByDate()
+                    pinAdapter.sortByDate()
 
                 if (value == "дате [новые->старые]")
-                    adapter.sortedDescByDate()
+                    pinAdapter.sortedDescByDate()
 
                 // в конце назначаем текущий номер опции предыдущим
                 previousOptionsPosition = position

@@ -3,33 +3,43 @@ package ru.nsu.ccfit.tsd.pinmap.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.databinding.PinItemBinding
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
-import java.util.Collections
 
 class PinAdapter(private val pins: MutableList<Pin>) : RecyclerView.Adapter<PinAdapter.PinHolder>() {
-    private var pinList : MutableList<Pin>
+    private var pinList = mutableListOf<Pin>()
 
     init {
-        pinList = pins
+        pinList.addAll(pins)
+        sortAlphabetically()
     }
 
     class PinHolder(item : View) : RecyclerView.ViewHolder(item) {
         private val binding = PinItemBinding.bind(item)
 
         fun bind(pin: Pin) = with(binding) {
-            val name = pin.name
-            val date = "дата: " + pin.date
-            val latitude = "широта: " + pin.latitude
-            val longitude = "долгота: " + pin.longitude
+            pinNameTextView.text = pin.name
 
-            pinNameTextView.text = name
-            pinDateTextView.text = date
-            latitudeTextView.text= latitude
-            longitudeTextView.text= longitude
+            val coordinatesString = "широта: ${pin.latitude}; долгота: ${pin.longitude}"
+            coordinatesTextView.text = coordinatesString
+
+            val date = pin.date
+            if (date != null) {
+                val dateString = "дата: $date"
+                pinDateTextView.text = dateString
+            } else {
+                pinDateTextView.text = "дата не указана"
+            }
+
+            val tagsList = pin.tags
+            if (tagsList == null || tagsList.size == 0) {
+                tagsListTextView.text = "теги не указаны"
+            } else {
+                val tagsListString = "теги: ${tagsList.joinToString ( separator = ";" )}"
+                tagsListTextView.text = tagsListString
+            }
         }
     }
 
@@ -59,10 +69,42 @@ class PinAdapter(private val pins: MutableList<Pin>) : RecyclerView.Adapter<PinA
     }
 
     fun sortByDate() {
-       // TODO
+        val comparator = object : Comparator<Pin> {
+            override fun compare(pin1: Pin, pin2: Pin): Int {
+                if (pin1.date == null) {
+                    if (pin2.date == null)
+                        return 0
+
+                    return 1
+                }
+
+                if (pin2.date == null)
+                    return -1
+
+                return pin1.date!!.compareTo(pin2.date)
+            }
+        }
+        pinList.sortWith(comparator)
+        notifyDataSetChanged()
     }
 
     fun sortedDescByDate() {
-        // TODO
+        val comparator = object : Comparator<Pin> {
+            override fun compare(pin1: Pin, pin2: Pin): Int {
+                if (pin1.date == null) {
+                    if (pin2.date == null)
+                        return 0
+
+                    return 1
+                }
+
+                if (pin2.date == null)
+                    return -1
+
+                return pin2.date!!.compareTo(pin1.date)
+            }
+        }
+        pinList.sortWith(comparator)
+        notifyDataSetChanged()
     }
 }

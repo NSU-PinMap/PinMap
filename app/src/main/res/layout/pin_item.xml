@@ -33,13 +33,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/latitudeTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="10sp"
-                android:text="TextView" />
-            <TextView
-                android:id="@+id/longitudeTextView"
+                android:id="@+id/coordinatesTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="10sp"
@@ -47,6 +41,12 @@
 
             <TextView
                 android:id="@+id/pinDateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tagsListTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="TextView" />
