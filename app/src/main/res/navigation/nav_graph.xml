@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/startFragment"
         android:name="ru.nsu.ccfit.tsd.pinmap.fragments.StartFragment"
-        android:label="fragment_start"
+        android:label=""
         tools:layout="@layout/fragment_start" >
         <action
             android:id="@+id/action_startFragment_to_bottomSheetFragment"
@@ -35,7 +35,7 @@
     <fragment
         android:id="@+id/themesFragment"
         android:name="ru.nsu.ccfit.tsd.pinmap.fragments.ThemesFragment"
-        android:label="fragment_themes"
+        android:label="Настройка темы приложения"
         tools:layout="@layout/fragment_themes" >
         <action
             android:id="@+id/action_themesFragment_to_bottomSheetFragment2"
@@ -44,7 +44,7 @@
     <fragment
         android:id="@+id/mainMenuFragment"
         android:name="ru.nsu.ccfit.tsd.pinmap.fragments.MainMenuFragment"
-        android:label="fragment_main_menu"
+        android:label="Просмотр воспоминаний"
         tools:layout="@layout/fragment_main_menu" >
         <action
             android:id="@+id/action_mainMenuFragment_to_bottomSheetFragment"
@@ -59,7 +59,7 @@
     <fragment
         android:id="@+id/pinConstructorFragment"
         android:name="ru.nsu.ccfit.tsd.pinmap.fragments.PinConstructorFragment"
-        android:label="fragment_pin_constructor"
+        android:label=""
         tools:layout="@layout/fragment_pin_constructor" >
         <action
             android:id="@+id/action_pinConstructorFragment_to_startFragment"
@@ -84,11 +84,11 @@
     <fragment
         android:id="@+id/pinsListFragment"
         android:name="ru.nsu.ccfit.tsd.pinmap.fragments.PinsListFragment"
-        android:label="fragment_pins_list"
+        android:label="Воспоминания"
         tools:layout="@layout/fragment_pins_list" />
     <fragment
         android:id="@+id/tagsListFragment"
         android:name="ru.nsu.ccfit.tsd.pinmap.fragments.TagsListFragment"
-        android:label="fragment_tags_list"
+        android:label="Теги"
         tools:layout="@layout/fragment_tags_list" />
 </navigation>

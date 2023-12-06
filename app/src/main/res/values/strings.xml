@@ -2,4 +2,8 @@
     <string name="app_name">PinMap</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="tags_sort_dropdown_options">
+        <item>алфавиту [А->Я]</item>
+        <item>алфавиту [Я->А]</item>
+    </string-array>
 </resources>
