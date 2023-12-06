@@ -38,41 +38,21 @@ class PinsListFragment : Fragment() {
         pinController = PinController.getController(requireContext())
 
         // Проверка корректности выгрузки пинов и появления их в recycler view
-/*
-                //val pin1 = Pin("pin1", 47.6, 2.1944)
-                val pin6 = Pin("pin6", 48.0, 2.1270)
-                pin6.date = Date(9, 5, 7)
+        // TODO: протестировать с добавлением пина на карте
+        /*
+        val pin1 = Pin("pin1", 47.6, 2.1944)
+        pin1.date = Date(9, 5, 7)
+        pinController.save(pin1)
+        */
 
-                // вот это не прокатило, там они только уже готовые из бд берутся?
-                pin6.tags = mutableListOf("tag1", "tag2")
-
-
-                //pinController.delete(pin1)
-                //pinController.delete(pin2)
-
-                pinController.save(pin6)
-                //pinController.save(pin2)
-*/
-
-        // Проверка корректности добавления пина в recycler view (появляется при переоткрытии фрагмента)
-        // !!!!!!!!!!!!!!! Этой кнопки уже нет в xml-файле
-        // TODO: перепроверить в связи с внесёнными в адаптер изменениями
-/*
-        binding.button3.setOnClickListener{
-            val pin3 = Pin("pin3", 47.0, 2.1945)
-            pinController.save(pin3)
-        }
-*/
+        // Передаём пины из pinController в PinAdapter
         pinAdapter = PinAdapter(pinController.getAllPins())
 
         val recyclerView = binding.rcPins
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        // Передаём пины из pinController в PinAdapter
         recyclerView.adapter = pinAdapter
 
         val controller = findNavController()
-
 
         val options = resources.getStringArray(R.array.pins_sort_dropdown_options)
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, options)
@@ -107,24 +87,17 @@ class PinsListFragment : Fragment() {
         val searchView = view.findViewById<SearchView>(R.id.search)
         searchView.clearFocus()
 
-        //TODO: когда дойдёшь до списков, раскомментируй и замени list и listAdapter на соответствующие переменные
-        //TODO: upd: Вова напомнил, что у нас вообще-то отдельная логика для поиска должна быть -> исправить/убрать
-        /*
+        //TODO: добавить доступ к окну поиска, когда оно будет готово
+/*
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                if (list.contains(query)) {
-                    listAdapter.filter.filter(query)
-                    //TODO: notify?
-                }
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                listAdapter.filter.filter(newText)
-                //TODO: notify?
                 return false
             }
         })
-         */
+*/
     }
 }
