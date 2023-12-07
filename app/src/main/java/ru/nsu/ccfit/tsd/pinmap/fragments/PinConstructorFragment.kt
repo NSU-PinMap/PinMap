@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.tsd.pinmap.fragments
 
+import android.app.AlertDialog
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.net.Uri
 import android.os.Bundle
@@ -25,6 +26,7 @@ class PinConstructorFragment() : Fragment() {
     private lateinit var pinController: PinController
     private lateinit var pin: Pin
     private var isPinNew: Boolean = true
+    private lateinit var alertBuilder : AlertDialog.Builder
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -82,22 +84,39 @@ class PinConstructorFragment() : Fragment() {
 
                 //todo я планировал использовать recyclerView для тегов и фотографий, мб это не лучшая идея
                 // сейчас однако в xml фрагмента лежат они
+                // тут бы какой-то другой ViewGroup поставить
 
                 //todo тут осталось вытащить и показать настроение, тэги, дату и фотографии
                 //todo надо придумать как красиво показывать локацию (сейчас это просто две координаты...)
+
+                // чтобы нельзя было редактировать сразу при открытии фрагмента
+                disableEdit()
+
+                binding.editButton.visibility = View.VISIBLE
+                binding.deleteButton.visibility = View.VISIBLE
+                binding.saveButton.visibility = View.GONE
+                binding.cancelButton.visibility = View.GONE
+
             } else { // конструктор вызван по созданию нового пина; его нельзя удалять из базы, ибо его там ещё нет!
                 binding.deleteButton.visibility = View.GONE
+
+                // чтобы можно было редактировать сразу при открытии фрагмента
+                enableEdit()
+                binding.editButton.visibility = View.GONE
+                binding.deleteButton.visibility = View.GONE
+                binding.saveButton.visibility = View.VISIBLE
+                binding.cancelButton.visibility = View.VISIBLE
             }
+
         }
+
+        alertBuilder = AlertDialog.Builder(context)
 
         setBackButtonListener()
         setEditButtonListener()
         setCancelButtonListener()
         setSaveButtonListener()
         setDeleteButtonListener()
-
-        // чтобы нельзя было редактировать при открытии фрагмента
-        disableEdit()
 
         pinController = context?.let { PinController.getController(it) }!!
 
@@ -124,7 +143,9 @@ class PinConstructorFragment() : Fragment() {
         val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
 
-        //todo выключить редактирование локации (когда редактирование будет красивым), тегов, картинок и настроения
+        //todo выключить редактирование локации (когда редактирование будет красивым), тегов и картинок
+
+        binding.moodSlider.isEnabled = false
     }
 
     private fun enableEdit() {
@@ -143,17 +164,35 @@ class PinConstructorFragment() : Fragment() {
         binding.dateText.inputType = InputType.TYPE_CLASS_DATETIME
         binding.dateText.setTextIsSelectable(true)
 
-        //todo включить редактирование локации (когда редактирование будет красивым), тегов, картинок и настроения
+        //todo включить редактирование локации (когда редактирование будет красивым), тегов и картинок
+
+        binding.moodSlider.isEnabled = true
     }
 
     private fun setDeleteButtonListener() {
         binding.deleteButton.setOnClickListener { v ->
-            val isDeleted = pinController.delete(pin)
-            if (isDeleted) {
-                Toast.makeText(context, "Воспоминание удалено", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, "Не удалось удалить воспоминание", Toast.LENGTH_SHORT).show()
-            }
+
+            alertBuilder.setMessage("Delete pin?")
+                .setCancelable(false)
+                .setPositiveButton("Yes") { _, _ ->
+                    val isDeleted = pinController.delete(pin)
+                    if (isDeleted) {
+                        Toast.makeText(context, "Воспоминание удалено", Toast.LENGTH_SHORT).show()
+                        val navController = findNavController()
+                        navController.navigate(R.id.startFragment)
+                    } else {
+                        Toast.makeText(context, "Не удалось удалить воспоминание", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton(
+                    "No"
+                ) { _, _ ->
+                    Toast.makeText(context, "Удаление отменено", Toast.LENGTH_SHORT).show()
+                }
+            val alert: AlertDialog = alertBuilder.create()
+            alert.setTitle("Confirm pin deletion")
+            alert.show()
+
         }
     }
 
@@ -175,12 +214,15 @@ class PinConstructorFragment() : Fragment() {
             //pin.date = binding.dateText.text. //todo
             //todo картинки ещё
 
-            val isSaved = pinController.save(pin) //сюда надо подставить нужный пин; аналогичный код для делете
+            val isSaved = pinController.save(pin)
             if (isSaved) {
                 Toast.makeText(context, "Воспоминание сохранено", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, "Не удалось сохранить воспоминание", Toast.LENGTH_SHORT).show()
             }
+
+            val navController = findNavController()
+            navController.navigate(R.id.startFragment)
 
         }
     }
