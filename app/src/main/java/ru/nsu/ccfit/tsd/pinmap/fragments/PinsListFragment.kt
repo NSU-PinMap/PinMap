@@ -1,23 +1,20 @@
 package ru.nsu.ccfit.tsd.pinmap.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.SearchView
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.adapters.PinAdapter
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinsListBinding
-import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
-import java.util.Collections
-import java.util.Date
+
 
 class PinsListFragment : Fragment() {
     private var _binding: FragmentPinsListBinding? = null
@@ -35,6 +32,17 @@ class PinsListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // NavController нужен, чтобы позже из списка по нажатию переходить в конструктор
+        //val controller = findNavController()
+
+        // Код для навигации по стрелке назад в кастомном тулбаре
+/*
+        val toolbar = binding.toolbar
+        // тут нужно будет поменять картинку с лупы на back arrow
+        toolbar.setNavigationIcon(R.drawable.ic_search_foreground)
+        toolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
+*/
+
         pinController = PinController.getController(requireContext())
 
         // Проверка корректности выгрузки пинов и появления их в recycler view
@@ -51,8 +59,6 @@ class PinsListFragment : Fragment() {
         val recyclerView = binding.rcPins
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = pinAdapter
-
-        val controller = findNavController()
 
         val options = resources.getStringArray(R.array.pins_sort_dropdown_options)
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, options)

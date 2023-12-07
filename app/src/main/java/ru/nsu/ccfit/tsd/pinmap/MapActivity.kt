@@ -81,10 +81,13 @@ class MapActivity : AppCompatActivity() {
         // надо будет породить для каждого маркера по объекту PinMarker и Pin (Pin внутри PinMarker)
         pinController = PinController.getController(applicationContext)
 
+        // Код для дефолтного тулбара (чтобы это работало, нужно поменять themes.xml)
+/*
         // Если вы решите передвинуть эти две строчки кода, имейте в виду, что от их расположения зависит работоспособность приложения
         // (буквально, что-то должно проинициализироваться до вызова setupActionBarWithNavController, но я не знаю, в чём именно дело)
         val navController = findNavController(R.id.fragmentContainerViewConstructorUI)
-        setupActionBarWithNavController(navController)
+        //setupActionBarWithNavController(navController)
+*/
     }
 
     override fun onResume() {
@@ -135,9 +138,11 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
+    // Код для дефолтного тулбара
+/*
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.fragmentContainerViewConstructorUI)
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
-
+*/
 }
