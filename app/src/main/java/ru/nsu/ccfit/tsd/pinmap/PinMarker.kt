@@ -29,12 +29,13 @@ class PinMarker(mapView: MapView, mapActivity_: MapActivity, pin_: Pin) : Marker
             if (pin.id != null) bundle.putInt("id", pin.id!!)//todo это норм?
             bundle.putStringArray("tags", pin.tags.toTypedArray())//todo это работает? надо проверить во фрагменте
             bundle.putString("desc", pin.description)
-            bundle.putByte("mood", pin.mood.toByte())//todo это норм? надо проверить во фрагменте
+            bundle.putByte("mood", pin.mood.toByte())
             bundle.putSerializable("date", pin.date)//todo это работает? надо проверить во фрагменте
 
             navController.navigate(R.id.pinConstructorFragment, bundle)
 
-            //todo запретить двигать картой пока находимся не в StartFragment
+            //todo запретить двигать картой пока находимся не в StartFragment (Вова сказал что надо, но я хз зачем)
+            //mapBinding.map.controller.
         }
 
         setInfoWindow(null) // это чтобы не показывать InfoWindow при нажатии на маркер
