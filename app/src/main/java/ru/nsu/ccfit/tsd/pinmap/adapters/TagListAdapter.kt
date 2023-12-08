@@ -37,6 +37,11 @@ class TagListAdapter(private val tags: MutableList<String>) : RecyclerView.Adapt
         holder.bind(tagList[position])
     }
 
+    fun setTags(newTags: MutableList<String>) {
+        tagList = newTags
+        notifyDataSetChanged()
+    }
+
     fun sortAlphabetically() {
         val comparator = Comparator<String> { tag1, tag2 -> tag1.compareTo(tag2) }
         tagList.sortWith(comparator)
@@ -46,13 +51,6 @@ class TagListAdapter(private val tags: MutableList<String>) : RecyclerView.Adapt
     fun sortDescAlphabetically() {
         val comparator = Comparator<String> { tag1, tag2 -> tag2.compareTo(tag1) }
         tagList.sortWith(comparator)
-        notifyDataSetChanged()
-    }
-
-    //TODO: исправить "сброс" сортировки при фильтрации
-    fun filter(filteredTags: MutableList<String>) {
-        tagList.clear()
-        tagList.addAll(filteredTags)
         notifyDataSetChanged()
     }
 }

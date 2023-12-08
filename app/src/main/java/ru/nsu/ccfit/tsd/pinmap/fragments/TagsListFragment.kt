@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.SearchView
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.adapters.TagListAdapter
@@ -21,6 +20,13 @@ class TagsListFragment : Fragment() {
     private lateinit var pinController: PinController
     private lateinit var tagListAdapter: TagListAdapter
     private lateinit var tagsList: MutableList<String>
+
+    // В этой переменной лежит позиция последней выбранной сортировки в массиве options
+    // (см. в функции onViewCreated и tags_sort_dropdown_options в strings.xml)
+    //
+    // Она вынесена сюда, а не оставлена локальной, поскольку мне в функии filter требуется знать,
+    // какая сортировка в данный момент выбрана пользователем
+    private var previousSortPosition = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,38 +41,39 @@ class TagsListFragment : Fragment() {
         pinController = PinController.getController(requireContext())
 
         // Поскольку у нас пока нельзя проверить работу с тегами через pinController, я проверяла на списке строк
-        /**/
-        tagsList = mutableListOf("tag1", "tag2", "tag5", "tag3", "tag4", "tag6", "tag7", "tag8", "tag9", "tag10")
+        tagsList = mutableListOf("tag1", "tag2", "meow2",
+                                 "tag40", "tag3", "tag4",
+                                 "tag6", "tag7", "tag8",
+                                 "tag9", "tag10", "meow1")
         tagListAdapter = TagListAdapter(tagsList)
 
-        //tagListAdapter = TagListAdapter(pinController.getAllTags())
-
+        // Позже заменить на это:
+/*
+        tagsList = mutableListOf()
+        tagsList.addAll(pinController.getAllTags())
+        tagListAdapter = TagListAdapter(tagsList)
+*/
         val recyclerView = binding.rcTags
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = tagListAdapter
 
-        val controller = findNavController()
+        // NavController потребуется для перехода по нажатию на элемент списка в PinConctructor
+        //val controller = findNavController()
 
         val options = resources.getStringArray(R.array.tags_sort_dropdown_options)
-        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, options)
+        val optionsArrayAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, options)
         val sortMenu = view.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
-        sortMenu.setAdapter(arrayAdapter)
+        sortMenu.setAdapter(optionsArrayAdapter)
 
-        var previousOptionsPosition = -1
         sortMenu.setOnItemClickListener { _, _, position, _ ->
             // value -- это String-значение выбранной опции, а position -- её int-номер в менюшке
-            val value = arrayAdapter.getItem(position) ?: ""
+            val value = optionsArrayAdapter.getItem(position) ?: ""
 
-            // TODO: сделать что-нибудь с этой страшной чередой if'ов
-            if (position != previousOptionsPosition) {
-                if (value == "алфавиту [А->Я]")
-                    tagListAdapter.sortAlphabetically()
-
-                if (value == "алфавиту [Я->А]")
-                    tagListAdapter.sortDescAlphabetically()
-
-                // в конце назначаем текущий номер опции предыдущим
-                previousOptionsPosition = position
+            // Сортируем заново, только если вид сортировки поменяли
+            if (position != previousSortPosition) {
+                sort(value)
+                // После сортировки назначаем текущий номер опции предыдущим
+                previousSortPosition = position
             }
         }
 
@@ -74,23 +81,78 @@ class TagsListFragment : Fragment() {
         searchView.clearFocus()
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            // Эту функцию обязательно переопределять, но проще всего оставить пустой,
+            // onQueryTextChange и так отфильтрует вам поиск, когда вы допечатаете
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                var filteredTags = mutableListOf<String>()
-
-                for (tag in tagsList) {
-                    if (tag.contains("" + newText)) {
-                        filteredTags.add(tag)
-                    }
-                }
-
-                tagListAdapter.filter(filteredTags)
-
+                filter(newText)
                 return false
             }
         })
+    }
+
+    private fun sort(value: String) {
+        // В файле strings.xml лежат строки и задан массив, состоящий из них
+        // В коде ниже мы проверяем, с какой из строк совпало выбранное в массиве значение,
+        // чтобы определить, какая сортировка выбрана ползователем
+        //
+        // Это всё ещё колхоз, но менее ужасный, чем проверять по текстовой строке, мне кажется
+        val optionSortAlphabetically = resources.getText(R.string.optionSortAlphabetically).toString()
+        val optionSortDescAlphabetically = resources.getText(R.string.optionSortDescAlphabetically).toString()
+
+        // В зависимости от выбранной сортировки, вызываем нужную функцию в адаптере
+        // (см. adapters/TagListAdapter)
+        if (value == optionSortAlphabetically)
+            tagListAdapter.sortAlphabetically()
+
+        if (value == optionSortDescAlphabetically)
+            tagListAdapter.sortDescAlphabetically()
+    }
+
+    private fun filter(query: String?) {
+        val options = resources.getStringArray(R.array.tags_sort_dropdown_options)
+        val newTagsList = mutableListOf<String>()
+
+        for (tag in tagsList) {
+            if (tag.contains("" + query)) {
+                newTagsList.add(tag)
+            }
+        }
+
+
+        tagListAdapter.setTags(newTagsList)
+
+        if (-1 == previousSortPosition)
+            sort(options[0])
+        else
+            sort(options[previousSortPosition])
+
+        //
+        // При поиске мы передаём в адаптер отфильтрованный список и сортируем его
+        // в выбранном до этого порядке (исходно - по алфавиту)
+        //
+        // Если не отсортировать, то сортировка "сбросится", потому что отсортированный список
+        // лежит в адаптере, а tadsList здесь -  исходный список с изначальным порядком
+        //
+        // Можно, конечно, перенести функции сортировки сюда и сортировать tagsList,
+        // а не вызывать tagListAdapter.sort[порядок сортировки], но тогда придётся
+        // каждый раз пересоздавать список и при сортировке, потому что Android
+        // в упор отказывается видеть изменения в списке здесь, хоть я и вызываю
+        // tagListAdapter.notifyDataSetChanged()
+        //
+        // Другой вариант - фильтровать список в самом адаптере - я тоже пробовала,
+        // но тогда приходится хранить дополнительно полный список тегов, чтобы
+        // при изменении строки с запросом можно было вернуть в список те теги,
+        // которые раньше не подходили, а теперь подходят
+        //
+        // Причём нужно будет сортировать каждый раз полный список
+        //
+        //
+        // В общем, мне кажется, так, как сейчас, проще всего, но если, вы знаете, как сделать
+        // лучше - напишите мне и я исправлю
+        //
     }
 }
