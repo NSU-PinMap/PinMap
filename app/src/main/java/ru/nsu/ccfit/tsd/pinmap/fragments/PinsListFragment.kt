@@ -110,6 +110,7 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
     }
 
     override fun onFilter(filter: Filter) {
-        Toast.makeText(context, filter.textIncludes[1], Toast.LENGTH_SHORT).show()
+        // TODO: Заменить логикой поиска
+        Toast.makeText(context, "Вызван поиск в списке", Toast.LENGTH_SHORT).show()
     }
 }

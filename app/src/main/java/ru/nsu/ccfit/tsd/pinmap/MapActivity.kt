@@ -109,7 +109,8 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
     }
 
     override fun onFilter(filter: Filter) {
-        Toast.makeText(this, filter.textIncludes[0], Toast.LENGTH_SHORT).show()
+        // TODO: Заменить логикой поиска
+        Toast.makeText(this, "Вызван поиск на карте", Toast.LENGTH_SHORT).show()
     }
 
     // Код для дефолтного тулбара
