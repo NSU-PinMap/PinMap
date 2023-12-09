@@ -44,6 +44,11 @@ class FilterDialog: BottomSheetDialogFragment() {
     ): View {
         _binding = FilterDialogBinding.inflate(inflater, container, false)
 
+        if (parentFragment != null)
+            if (parentFragment is Filterable)
+                listener = parentFragment as Filterable
+
+
         binding.rangePicker.setOnClickListener {
             val dateRangePicker =
                 MaterialDatePicker.Builder.dateRangePicker()

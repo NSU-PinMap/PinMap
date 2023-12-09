@@ -7,16 +7,19 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.adapters.PinAdapter
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinsListBinding
+import ru.nsu.ccfit.tsd.pinmap.filter.Filter
+import ru.nsu.ccfit.tsd.pinmap.filter.FilterDialog
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 
 
-class PinsListFragment : Fragment() {
+class PinsListFragment : Fragment(), FilterDialog.Filterable {
     private var _binding: FragmentPinsListBinding? = null
     private val binding get() = _binding!!
     private lateinit var pinController: PinController
@@ -90,8 +93,7 @@ class PinsListFragment : Fragment() {
             }
         }
 
-        val searchView = view.findViewById<SearchView>(R.id.search)
-        searchView.clearFocus()
+        binding.search.setOnClickListener { FilterDialog().show(childFragmentManager, "map") }
 
         //TODO: добавить доступ к окну поиска, когда оно будет готово
 /*
@@ -105,5 +107,9 @@ class PinsListFragment : Fragment() {
             }
         })
 */
+    }
+
+    override fun onFilter(filter: Filter) {
+        Toast.makeText(context, filter.textIncludes[1], Toast.LENGTH_SHORT).show()
     }
 }
