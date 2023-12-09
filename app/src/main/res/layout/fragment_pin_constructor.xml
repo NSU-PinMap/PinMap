@@ -23,7 +23,7 @@
                 android:id="@+id/backButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Return to map" />
+                android:text="Return"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/btnConstraintLayout"
