@@ -1,21 +1,16 @@
 package ru.nsu.ccfit.tsd.pinmap.filter
 
-import android.app.AlertDialog
-import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.util.component1
 import androidx.core.util.component2
-import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
-import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.databinding.FilterDialogBinding
-import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinsListBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -24,6 +19,23 @@ class FilterDialog: BottomSheetDialogFragment() {
 
     private var _binding: FilterDialogBinding? = null
     private val binding get() = _binding!!
+    private var filter = Filter()
+    private lateinit var listener: Filterable
+
+    interface Filterable {
+        fun onFilter(filter: Filter)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            listener = context as Filterable
+        } catch (e: ClassCastException) {
+            // The activity doesn't implement the interface. Throw exception.
+            throw ClassCastException((context.toString() +
+                    " must implement FilterDialog.Filterable"))
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,20 +57,34 @@ class FilterDialog: BottomSheetDialogFragment() {
                     .build()
 
             dateRangePicker.addOnPositiveButtonClickListener {
-                binding.dateStart.text = dateRangePicker.selection?.let {
-                    SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-                        .format(Date(it.component1()))}
+                if (dateRangePicker.selection == null)
+                    return@addOnPositiveButtonClickListener
 
-                binding.dateEnd.text = dateRangePicker.selection?.let {
-                    SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-                        .format(Date(it.component2()))}
+                filter.startDate = Date(dateRangePicker.selection!!.component1())
+                filter.endDate = Date(dateRangePicker.selection!!.component2())
+
+                binding.dateStart.text = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                    .format(filter.startDate!!)
+                binding.dateEnd.text = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                    .format(filter.endDate!!)
+
             }
 
             dateRangePicker.show(parentFragmentManager, "dates")
         }
 
         binding.searchButton.setOnClickListener {
-            this.findNavController().popBackStack()
+            filter.hasTags.clear()
+            filter.hasTags.addAll(binding.tags.text.toString().split(";"))
+
+            filter.textIncludes.clear()
+            filter.textIncludes.addAll(binding.textIncludes.text.toString().split(";"))
+
+            filter.lowestMood = binding.moodSlider.value.toInt().toByte()
+
+            listener.onFilter(filter)
+
+            dismiss()
         }
 
         return binding.root
