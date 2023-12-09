@@ -16,6 +16,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import ru.nsu.ccfit.tsd.pinmap.databinding.ActivityMainBinding
+import ru.nsu.ccfit.tsd.pinmap.filter.FilterDialog
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 
 class MapActivity : AppCompatActivity() {
