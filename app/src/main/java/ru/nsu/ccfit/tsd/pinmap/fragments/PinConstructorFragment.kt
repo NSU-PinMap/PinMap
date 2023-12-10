@@ -179,7 +179,7 @@ class PinConstructorFragment() : Fragment() {
                     if (isDeleted) {
                         Toast.makeText(context, "Воспоминание удалено", Toast.LENGTH_SHORT).show()
                         val navController = findNavController()
-                        navController.navigate(R.id.startFragment)
+                        navController.popBackStack()
                     } else {
                         Toast.makeText(context, "Не удалось удалить воспоминание", Toast.LENGTH_SHORT).show()
                     }
@@ -222,7 +222,7 @@ class PinConstructorFragment() : Fragment() {
             }
 
             val navController = findNavController()
-            navController.navigate(R.id.startFragment)
+            navController.popBackStack()
 
         }
     }
@@ -250,7 +250,7 @@ class PinConstructorFragment() : Fragment() {
     private fun setBackButtonListener() {
         binding.backButton.setOnClickListener { v ->
             val navController = findNavController()
-            navController.navigate(R.id.startFragment)
+            navController.popBackStack()
         }
     }
 
