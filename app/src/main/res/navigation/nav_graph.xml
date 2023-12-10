@@ -91,4 +91,9 @@
         android:name="ru.nsu.ccfit.tsd.pinmap.fragments.TagsListFragment"
         android:label="fragment_tags_list"
         tools:layout="@layout/fragment_tags_list" />
+    <fragment
+        android:id="@+id/photoSelectorFragment"
+        android:name="ru.nsu.ccfit.tsd.pinmap.fragments.PhotoSelectorFragment"
+        android:label="fragment_photo_selector"
+        tools:layout="@layout/fragment_photo_selector" />
 </navigation>
