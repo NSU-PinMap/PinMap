@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.nsu.ccfit.tsd.pinmap.R
+import ru.nsu.ccfit.tsd.pinmap.contract.PickImageContract
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinConstructorBinding
 import ru.nsu.ccfit.tsd.pinmap.fragments.adapters.ImageAdapter
 import ru.nsu.ccfit.tsd.pinmap.fragments.adapters.TagAdapter
@@ -24,9 +25,20 @@ class PinConstructorFragment() : Fragment() {
     private var _binding: FragmentPinConstructorBinding? = null
     private val binding get() = _binding!!
     private lateinit var pinController: PinController
+
     private lateinit var pin: Pin
+    private var imageDataset = listOf<Uri>()
     private var isPinNew: Boolean = true
-    private lateinit var alertBuilder : AlertDialog.Builder
+
+    private lateinit var alertBuilder: AlertDialog.Builder
+
+    private val imageAdapter = ImageAdapter(imageDataset)
+
+    private val pickImageLauncher =
+        registerForActivityResult(PickImageContract()) { photos ->
+            imageDataset = photos
+            imageAdapter.updateList(photos)
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,12 +48,8 @@ class PinConstructorFragment() : Fragment() {
         val view = binding.root
         val bundle = arguments
 
-        val imageDataset = arrayListOf<Uri?>(null, null, null)
-        val imageAdapter = ImageAdapter(imageDataset)
         binding.imagesRecyclerView.adapter = imageAdapter
         binding.imagesRecyclerView.layoutManager = LinearLayoutManager(context)
-        //todo огромное расстояние между картинками; не знаю как чинить
-        //todo нужно сделать нормальное получение картинок по Uri
 
         val tagDataset = arrayListOf<String?>(null, null, null)
         val tagAdapter = TagAdapter(tagDataset)
@@ -52,7 +60,7 @@ class PinConstructorFragment() : Fragment() {
         if (bundle != null) {
 
             val name = bundle.getString("name")
-            val safeName : String
+            val safeName: String
             if (name != null) {
                 safeName = name
             } else {
@@ -112,6 +120,7 @@ class PinConstructorFragment() : Fragment() {
 
         alertBuilder = AlertDialog.Builder(context)
 
+        setImageUpdateButtonListener()
         setBackButtonListener()
         setEditButtonListener()
         setCancelButtonListener()
@@ -139,8 +148,11 @@ class PinConstructorFragment() : Fragment() {
         binding.dateText.inputType = InputType.TYPE_NULL
         binding.dateText.setTextIsSelectable(false)
 
+        binding.updateImageButton.visibility = View.GONE
+
         // скрываем клавиатуру
-        val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager =
+            requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
 
         //todo выключить редактирование локации (когда редактирование будет красивым), тегов и картинок
@@ -164,9 +176,19 @@ class PinConstructorFragment() : Fragment() {
         binding.dateText.inputType = InputType.TYPE_CLASS_DATETIME
         binding.dateText.setTextIsSelectable(true)
 
+        binding.updateImageButton.visibility = View.VISIBLE
+
         //todo включить редактирование локации (когда редактирование будет красивым), тегов и картинок
 
         binding.moodSlider.isEnabled = true
+    }
+
+    private fun setImageUpdateButtonListener() {
+        binding.updateImageButton.setOnClickListener{
+
+            pickImageLauncher.launch(imageDataset)
+
+        }
     }
 
     private fun setDeleteButtonListener() {
@@ -181,7 +203,11 @@ class PinConstructorFragment() : Fragment() {
                         val navController = findNavController()
                         navController.navigate(R.id.startFragment)
                     } else {
-                        Toast.makeText(context, "Не удалось удалить воспоминание", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Не удалось удалить воспоминание",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
                 .setNegativeButton(
@@ -218,7 +244,8 @@ class PinConstructorFragment() : Fragment() {
             if (isSaved) {
                 Toast.makeText(context, "Воспоминание сохранено", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, "Не удалось сохранить воспоминание", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Не удалось сохранить воспоминание", Toast.LENGTH_SHORT)
+                    .show()
             }
 
             val navController = findNavController()
