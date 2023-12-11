@@ -229,6 +229,7 @@ class PinConstructorFragment() : Fragment() {
             val latitude = binding.latitudeText.text.toString().toDouble()
             val longitude = binding.longitudeText.text.toString().toDouble()
             val pin = Pin(name, latitude, longitude)
+            //todo добавить id в pin и делать save по нему + лучше использовать существующее поле
 
             pin.mood = binding.moodSlider.value.toInt().toUByte()
             //pin.tags //todo
