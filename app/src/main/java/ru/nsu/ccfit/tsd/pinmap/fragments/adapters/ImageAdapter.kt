@@ -6,9 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import ru.nsu.ccfit.tsd.pinmap.R
 
-class ImageAdapter(private val dataSet: ArrayList<Uri?>) :
+class ImageAdapter(private var images: List<Uri>) :
     RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
 
     /**
@@ -38,12 +39,15 @@ class ImageAdapter(private val dataSet: ArrayList<Uri?>) :
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        //viewHolder.imageView.setImageUri(dataSet[position])
-        //todo это placeholder
-        viewHolder.imageView.setImageResource(R.drawable.pic_example)
+        Picasso.get().load(images[position]).into(viewHolder.imageView);
+    }
+
+    fun updateList(newImages: List<Uri>) {
+        images = newImages
+        notifyDataSetChanged()
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = dataSet.size
+    override fun getItemCount() = images.size
 
 }
