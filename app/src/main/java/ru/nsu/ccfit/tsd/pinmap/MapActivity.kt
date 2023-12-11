@@ -3,6 +3,7 @@ package ru.nsu.ccfit.tsd.pinmap
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -16,9 +17,11 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import ru.nsu.ccfit.tsd.pinmap.databinding.ActivityMainBinding
+import ru.nsu.ccfit.tsd.pinmap.filter.Filter
+import ru.nsu.ccfit.tsd.pinmap.filter.FilterDialog
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 
-class MapActivity : AppCompatActivity() {
+class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
 
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map: MapView
@@ -103,6 +106,11 @@ class MapActivity : AppCompatActivity() {
                 REQUEST_PERMISSIONS_REQUEST_CODE
             )
         }
+    }
+
+    override fun onFilter(filter: Filter) {
+        // TODO: Заменить логикой поиска
+        Toast.makeText(this, "Вызван поиск на карте", Toast.LENGTH_SHORT).show()
     }
 
     // Код для дефолтного тулбара
