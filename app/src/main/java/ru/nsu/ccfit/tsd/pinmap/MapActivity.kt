@@ -58,6 +58,15 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
         mapController.setZoom(9.5)
         val startPoint = GeoPoint(48.8583, 2.2944)
         mapController.setCenter(startPoint)
+
+        // Код для дефолтного toolbar
+/*
+        // Если вы решите передвинуть эти две строчки кода, имейте в виду, что от их расположения зависит работоспособность приложения
+        // (буквально, что-то должно проинициализироваться до вызова setupActionBarWithNavController, но я не знаю, в чём именно дело)
+        val navController = findNavController(R.id.fragmentContainerViewConstructorUI)
+        setupActionBarWithNavController(navController)
+*/
+
     }
 
     override fun onResume() {
@@ -107,6 +116,7 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
             )
         }
     }
+
 
     override fun onFilter(filter: Filter) {
         // TODO: Заменить логикой поиска
