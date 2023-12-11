@@ -224,9 +224,6 @@ class PinConstructorFragment() : Fragment() {
 
     private fun setSaveButtonListener() {
         binding.saveButton.setOnClickListener { v ->
-
-            pinController.delete(pin)
-
             // надо заново считать всё с полей ввода и сунуть в пин, и потом уже сохранить
             val name = binding.nameText.text.toString()
             val latitude = binding.latitudeText.text.toString().toDouble()
