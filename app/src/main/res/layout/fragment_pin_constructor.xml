@@ -23,7 +23,7 @@
                 android:id="@+id/backButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Return to map" />
+                android:text="Return"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/btnConstraintLayout"
@@ -118,11 +118,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/imagesRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
             <com.google.android.material.slider.Slider
                 android:id="@+id/moodSlider"
                 android:layout_width="match_parent"
@@ -130,6 +125,11 @@
                 android:valueFrom="1.0"
                 android:valueTo="5.0"
                 android:stepSize="1.0"  />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/imagesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
     </ScrollView>
