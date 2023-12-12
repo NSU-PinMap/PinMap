@@ -5,4 +5,5 @@ interface PinStorage {
     fun delete(pin: Pin) : Boolean
     fun getAllPins() : MutableList<Pin>
     fun getAllTags() : MutableList<String>
+    fun getPinById(id: Int): Pin?
 }

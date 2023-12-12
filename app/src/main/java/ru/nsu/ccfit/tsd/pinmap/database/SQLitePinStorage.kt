@@ -37,6 +37,10 @@ class SQLitePinStorage(context: Context) : PinStorage {
         return db.tagDao()!!.getAllTagsNames().toMutableList()
     }
 
+    override fun getPinById(id: Int): Pin {
+        return PinMapper.entityToPin(db, db.pinDao()!!.getPinById(id))
+    }
+
     private fun saveTags(pinId: Long, tags: MutableList<String>) {
         for (tag in tags) {
             if (db.tagDao()!!.doesTagExists(tag)) {
