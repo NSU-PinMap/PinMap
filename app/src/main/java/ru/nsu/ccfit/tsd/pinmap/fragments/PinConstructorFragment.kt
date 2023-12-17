@@ -124,7 +124,7 @@ class PinConstructorFragment() : Fragment() {
 
             binding.longitudeText.text = pin.longitude.toString()
 
-            val date = pin.date//todo посмотреть в диалоге
+            val date = pin.date
             if (date != null) {
                 val sdf = SimpleDateFormat("yyyy-MM-dd")
                 val dateString: String = sdf.format(date)
@@ -135,7 +135,6 @@ class PinConstructorFragment() : Fragment() {
 
             binding.moodSlider.value = pin.mood.toFloat()
 
-            pin.tags = mutableListOf("kekw", "lmao")
             val tagsText = pin.tags.joinToString(separator = ";")
             binding.tagsText.setText(tagsText)
 
@@ -317,20 +316,6 @@ class PinConstructorFragment() : Fragment() {
         binding.backButton.setOnClickListener { v ->
             val navController = findNavController()
             navController.popBackStack()
-        }
-    }
-
-    // это нужно чтобы вообще иметь возможность создать фрагмент?
-    // вроде и без него правда что-то создаётся
-    // но через эту хрень явно прокидываются аргументы для создания фрагмента
-    // если это удалить то программа жалуется вроде :(
-    companion object {
-        private const val NAME = "name"
-
-        fun newInstance(string: String) = PinConstructorFragment().apply {
-            arguments = Bundle(1).apply {
-                putString(NAME, string)
-            }
         }
     }
 

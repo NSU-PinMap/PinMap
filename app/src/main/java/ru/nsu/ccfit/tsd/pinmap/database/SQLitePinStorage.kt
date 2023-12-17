@@ -31,7 +31,7 @@ class SQLitePinStorage(context: Context) : PinStorage {
     override fun save(pin: Pin): Pin {
         if (pin.id == null){ // пин новый, надо insert
             val id = db.pinDao().insertPin(PinMapper.pinToEntity(db, pin))
-            saveTags(id, pin.tags)//todo не сохраняет
+            saveTags(id, pin.tags)
             pin.id = id.toInt()
         } else {// пин существующий, надо update
             db.pinDao().updatePin(PinMapper.pinToEntity(db, pin))
