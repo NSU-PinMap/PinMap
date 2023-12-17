@@ -107,9 +107,8 @@ class SQLitePinStorage(context: Context) : PinStorage {
         if (filter.hasTags.isNotEmpty()) {
             for (tag in filter.hasTags) {
                 pins = pins.filter { pin ->
-                    db.tagDao().getTagsByPinId(pin.pinId.toInt()).stream()
+                    db.tagDao().getTagsByPinId(pin.pinId.toInt())
                         .map { tagEntity -> tagEntity.name }
-                        .collect(Collectors.toList())
                         .contains(tag)
                 }
             }
@@ -133,9 +132,7 @@ class SQLitePinStorage(context: Context) : PinStorage {
             pins = pins.filter { pin -> pin.mood <= filter.highestMood!! }
         }
 
-        return pins.stream()
-            .map { pin -> PinMapper.entityToPin(db, pin) }
-            .collect(Collectors.toList()).toMutableList()
+        return pins.map { pin -> PinMapper.entityToPin(db, pin) }.toMutableList()
     }
 
 }
