@@ -33,9 +33,9 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val searchButton = view.findViewById<Button>(R.id.buttonSearch)
         searchButton.setOnClickListener {
             findNavController().popBackStack()
-            val newFragment = FilterDialog()
-            newFragment.setFilterListener(activity as MapActivity)
-            newFragment.show(parentFragmentManager, "map")
+            val filterDialog = FilterDialog()
+            filterDialog.setFilterListener(activity as MapActivity)
+            filterDialog.show(parentFragmentManager, "map")
         }
 
         val mainMenuButton = view.findViewById<Button>(R.id.buttonMainMenu)
