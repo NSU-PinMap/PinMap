@@ -120,6 +120,8 @@ class PinConstructorFragment() : Fragment() {
                 }
             }
 
+            binding.nameText.text.insert(0, pin.name)
+
             binding.latitudeText.text = pin.latitude.toString()
 
             binding.longitudeText.text = pin.longitude.toString()
@@ -217,7 +219,6 @@ class PinConstructorFragment() : Fragment() {
 
     private fun setDeleteButtonListener() {
         binding.deleteButton.setOnClickListener { v ->
-
             alertBuilder.setMessage("Удалить воспоминание?")
                 .setCancelable(false)
                 .setPositiveButton("Да") { _, _ ->
