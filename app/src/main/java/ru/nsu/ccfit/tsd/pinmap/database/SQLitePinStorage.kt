@@ -1,12 +1,16 @@
 package ru.nsu.ccfit.tsd.pinmap.database
 
 import android.content.Context
+import android.net.Uri
 import androidx.room.Room.databaseBuilder
+import ru.nsu.ccfit.tsd.pinmap.database.entities.PhotoEntity
+import ru.nsu.ccfit.tsd.pinmap.database.entities.PinPhotoEntity
 import ru.nsu.ccfit.tsd.pinmap.database.entities.PinTagEntity
 import ru.nsu.ccfit.tsd.pinmap.database.entities.TagEntity
 import ru.nsu.ccfit.tsd.pinmap.database.mappers.PinMapper
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 import ru.nsu.ccfit.tsd.pinmap.pins.PinStorage
+import java.net.URI
 
 class SQLitePinStorage(context: Context) : PinStorage {
 
@@ -20,7 +24,10 @@ class SQLitePinStorage(context: Context) : PinStorage {
         if(pin.id != null) {
             deletePinTags(pin.id!!.toLong())
         }
+
         saveTags(id, pin.tags)
+        savePhotos(id, pin.photos)
+
         pin.id = id.toInt()
         return pin
     }
@@ -28,6 +35,8 @@ class SQLitePinStorage(context: Context) : PinStorage {
     override fun delete(pin: Pin): Boolean {
         db.pinDao()!!.deletePin(PinMapper.pinToEntity(db, pin))
         deletePinTags(pin.id!!.toLong())
+        deletePinPhotos(pin.id!!.toLong())
+
         return true
     }
 
@@ -60,8 +69,29 @@ class SQLitePinStorage(context: Context) : PinStorage {
         }
     }
 
+    private fun savePhotos(pinId: Long, uriList: MutableList<Uri>) {
+        for (uri in uriList) {
+            val uriString = uri.toString()
+            if (db.photoDao()!!.doesPhotoExists(uriString)) {
+                db.photoDao()!!.insertPinPhoto(
+                    PinPhotoEntity(
+                        pinId,
+                        db.photoDao()!!.getPhotoByUri(uriString).photoId
+                    )
+                )
+            } else {
+                val photoId = db.photoDao()!!.insertPhoto(PhotoEntity(uriString))
+                db.photoDao()!!.insertPinPhoto(PinPhotoEntity(pinId, photoId))
+            }
+        }
+    }
+
     private fun deletePinTags(pinId: Long) {
         db.tagDao().deletePinTags(pinId)
+    }
+
+    private fun deletePinPhotos(pinId: Long) {
+        db.photoDao().deletePinPhotos(pinId)
     }
 
 }
