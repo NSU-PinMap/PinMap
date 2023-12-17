@@ -50,6 +50,7 @@ class PinController private constructor(context: Context) {
     }
 
     fun getFilteredPins(filter: Filter): MutableList<Pin> {
+        //return getFilteredPins(filter)
         return getAllPins() // TODO: Реализовать поиск по параметрам
     }
 

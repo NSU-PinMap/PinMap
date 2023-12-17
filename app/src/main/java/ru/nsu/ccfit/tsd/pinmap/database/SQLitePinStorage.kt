@@ -4,13 +4,16 @@ import android.content.Context
 import android.net.Uri
 import androidx.room.Room.databaseBuilder
 import ru.nsu.ccfit.tsd.pinmap.database.entities.PhotoEntity
+import ru.nsu.ccfit.tsd.pinmap.database.entities.PinEntity
 import ru.nsu.ccfit.tsd.pinmap.database.entities.PinPhotoEntity
 import ru.nsu.ccfit.tsd.pinmap.database.entities.PinTagEntity
 import ru.nsu.ccfit.tsd.pinmap.database.entities.TagEntity
 import ru.nsu.ccfit.tsd.pinmap.database.mappers.PinMapper
+import ru.nsu.ccfit.tsd.pinmap.filter.Filter
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 import ru.nsu.ccfit.tsd.pinmap.pins.PinStorage
 import java.net.URI
+import java.util.stream.Collectors
 
 class SQLitePinStorage(context: Context) : PinStorage {
 
@@ -21,7 +24,7 @@ class SQLitePinStorage(context: Context) : PinStorage {
 
     override fun save(pin: Pin): Pin? {
         val id = db.pinDao()!!.insertPin(PinMapper.pinToEntity(db, pin))
-        if(pin.id != null) {
+        if (pin.id != null) {
             deletePinTags(pin.id!!.toLong())
         }
 
@@ -92,6 +95,47 @@ class SQLitePinStorage(context: Context) : PinStorage {
 
     private fun deletePinPhotos(pinId: Long) {
         db.photoDao().deletePinPhotos(pinId)
+    }
+
+    fun getFilteredPins(filter: Filter): MutableList<Pin> {
+        var pins = db.pinDao().getAllPins()
+        if (filter.textIncludes.isNotEmpty()) {
+            for (text in filter.textIncludes) {
+                pins = pins.filter { pin -> pin.description.contains(text) }
+            }
+        }
+        if (filter.hasTags.isNotEmpty()) {
+            for (tag in filter.hasTags) {
+                pins = pins.filter { pin ->
+                    db.tagDao().getTagsByPinId(pin.pinId.toInt()).stream()
+                        .map { tagEntity -> tagEntity.name }
+                        .collect(Collectors.toList())
+                        .contains(tag)
+                }
+            }
+        }
+        if (filter.startDate != null) {
+            pins = pins.filter { pin ->
+                PinMapper.dateFromTimestamp(pin.date)?.after(filter.startDate)
+                    ?: false
+            }
+        }
+        if (filter.endDate != null) {
+            pins = pins.filter { pin ->
+                PinMapper.dateFromTimestamp(pin.date)?.before(filter.endDate)
+                    ?: false
+            }
+        }
+        if (filter.lowestMood != null) {
+            pins = pins.filter { pin -> pin.mood >= filter.lowestMood!! }
+        }
+        if (filter.highestMood != null) {
+            pins = pins.filter { pin -> pin.mood <= filter.highestMood!! }
+        }
+
+        return pins.stream()
+            .map { pin -> PinMapper.entityToPin(db, pin) }
+            .collect(Collectors.toList()).toMutableList()
     }
 
 }

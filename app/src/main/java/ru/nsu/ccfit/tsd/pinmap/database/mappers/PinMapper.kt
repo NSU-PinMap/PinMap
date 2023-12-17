@@ -37,7 +37,7 @@ class PinMapper {
             return pin
         }
 
-        private fun dateFromTimestamp(value: Long?): Date? {
+        public fun dateFromTimestamp(value: Long?): Date? {
             return value?.let { Date(it) }
         }
 
