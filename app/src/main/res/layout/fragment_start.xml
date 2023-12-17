@@ -29,6 +29,18 @@
         android:visibility="gone"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/showAllMarkersFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="90dp"
+        android:contentDescription="Show all markers irrespective of filters"
+        android:src="@drawable/ic_undo_foreground"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/zoomInFab"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/confirmMarkerFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,7 +48,7 @@
         android:layout_marginBottom="60dp"
         android:contentDescription="Confirm adding marker"
         android:src="@drawable/confirm_marker"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -48,7 +60,7 @@
         android:layout_marginBottom="60dp"
         android:contentDescription="Cancel adding marker"
         android:src="@drawable/cancel_marker"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/confirmMarkerFab" />
 
@@ -60,6 +72,7 @@
         android:layout_marginBottom="60dp"
         android:contentDescription="Add marker"
         android:src="@drawable/add_marker"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
