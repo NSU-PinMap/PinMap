@@ -15,28 +15,10 @@ class SQLitePinStorage(context: Context) : PinStorage {
             .allowMainThreadQueries()
             .build()
 
-    /*override fun save(pin: Pin): Pin? {
+    override fun save(pin: Pin): Pin? {
         val id = db.pinDao()!!.insertPin(PinMapper.pinToEntity(db, pin))
         saveTags(id, pin.tags)
         pin.id = id.toInt()
-        return pin
-    }*/
-
-    /*todo это пытался Вася, который вообще не должен этим заниматься
-     правда, это нихрена не помогло, update просто не работает и всё
-     закомментированный метод сверху был изначально, но я сделал новый,
-     потому что предыдущий вызывает краш при попытке вставить пин с айди,
-     который уже есть в базе
-     теперь по крайней мере приложение не вылетает при попытке сохранения существующего пина*/
-    override fun save(pin: Pin): Pin {
-        if (pin.id == null){ // пин новый, надо insert
-            val id = db.pinDao().insertPin(PinMapper.pinToEntity(db, pin))
-            saveTags(id, pin.tags)
-            pin.id = id.toInt()
-        } else {// пин существующий, надо update
-            db.pinDao().updatePin(PinMapper.pinToEntity(db, pin))
-            //saveTags(pin.id!!.toLong(), pin.tags) //todo падает
-        }
         return pin
     }
 
