@@ -8,15 +8,15 @@ import java.util.Date
 class PinMapper {
     companion object {
         fun pinToEntity(db: PinMapDatabase, pin: Pin): PinEntity {
-            if (pin.id != null && db.pinDao()!!.doesPinExists(pin.id!!)) return db.pinDao()!!
-                .getPinById(
-                    pin.id!!
-                )
-
-            return PinEntity(
+            val pinEntity = PinEntity(
                 pin.name, pin.latitude, pin.longitude,
                 pin.mood.toInt(), dateToTimestamp(pin.date), pin.description
             )
+            if (pin.id != null) {
+                pinEntity.pinId = pin.id!!.toLong()
+            }
+
+            return pinEntity
         }
 
         fun entityToPin(db: PinMapDatabase, pinEntity: PinEntity): Pin {
