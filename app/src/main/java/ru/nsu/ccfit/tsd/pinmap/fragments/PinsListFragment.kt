@@ -59,7 +59,6 @@ class PinsListFragment : Fragment() {
         recyclerView.adapter = pinAdapter
 
         sortOptions = resources.getStringArray(R.array.pins_sort_dropdown_options)
-        Toast.makeText(requireContext(), "options:" + sortOptions.size, Toast.LENGTH_SHORT).show()
         sortAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, sortOptions)
         sortMenu = view.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
         sortMenu.setAdapter(sortAdapter)
