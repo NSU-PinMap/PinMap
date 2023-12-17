@@ -17,6 +17,9 @@ class SQLitePinStorage(context: Context) : PinStorage {
 
     override fun save(pin: Pin): Pin? {
         val id = db.pinDao()!!.insertPin(PinMapper.pinToEntity(db, pin))
+        if(pin.id != null) {
+            deletePinTags(pin.id!!.toLong())
+        }
         saveTags(id, pin.tags)
         pin.id = id.toInt()
         return pin

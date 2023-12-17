@@ -3,6 +3,7 @@ package ru.nsu.ccfit.tsd.pinmap.database.daos
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.nsu.ccfit.tsd.pinmap.database.entities.PinTagEntity
 import ru.nsu.ccfit.tsd.pinmap.database.entities.TagEntity
@@ -16,10 +17,10 @@ interface TagDao {
     @Query("SELECT EXISTS(SELECT * FROM tag WHERE name = :name)")
     fun doesTagExists(name: String): Boolean
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTag(tagEntity: TagEntity): Long
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPinTag(pinTagEntity: PinTagEntity): Long
 
     @Query("SELECT * FROM tag")

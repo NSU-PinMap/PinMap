@@ -3,13 +3,14 @@ package ru.nsu.ccfit.tsd.pinmap.database.daos
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import ru.nsu.ccfit.tsd.pinmap.database.entities.PinEntity
 
 @Dao
 interface PinDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPin(pinEntity: PinEntity): Long
 
     @Update
