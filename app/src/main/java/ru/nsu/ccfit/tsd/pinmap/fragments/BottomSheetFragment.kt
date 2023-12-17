@@ -8,6 +8,7 @@ import android.widget.Button
 import androidx.navigation.fragment.findNavController
 import ru.nsu.ccfit.tsd.pinmap.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import ru.nsu.ccfit.tsd.pinmap.MapActivity
 import ru.nsu.ccfit.tsd.pinmap.filter.FilterDialog
 
 class BottomSheetFragment : BottomSheetDialogFragment() {
@@ -32,8 +33,9 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val searchButton = view.findViewById<Button>(R.id.buttonSearch)
         searchButton.setOnClickListener {
             findNavController().popBackStack()
-            val newFragment = FilterDialog()
-            newFragment.show(parentFragmentManager, "map")
+            val filterDialog = FilterDialog()
+            filterDialog.setFilterListener(activity as MapActivity)
+            filterDialog.show(parentFragmentManager, "map")
         }
 
         val mainMenuButton = view.findViewById<Button>(R.id.buttonMainMenu)

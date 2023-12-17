@@ -1,13 +1,11 @@
 package ru.nsu.ccfit.tsd.pinmap.filter
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.util.component1
 import androidx.core.util.component2
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import ru.nsu.ccfit.tsd.pinmap.databinding.FilterDialogBinding
@@ -26,28 +24,12 @@ class FilterDialog: BottomSheetDialogFragment() {
         fun onFilter(filter: Filter)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            listener = context as Filterable
-        } catch (e: ClassCastException) {
-            // The activity doesn't implement the interface. Throw exception.
-            throw ClassCastException((context.toString() +
-                    " must implement FilterDialog.Filterable"))
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FilterDialogBinding.inflate(inflater, container, false)
-
-        if (parentFragment != null)
-            if (parentFragment is Filterable)
-                listener = parentFragment as Filterable
-
 
         binding.rangePicker.setOnClickListener {
             val dateRangePicker =
@@ -93,5 +75,9 @@ class FilterDialog: BottomSheetDialogFragment() {
         }
 
         return binding.root
+    }
+
+    fun setFilterListener(fragment : Filterable) {
+        listener = fragment
     }
 }

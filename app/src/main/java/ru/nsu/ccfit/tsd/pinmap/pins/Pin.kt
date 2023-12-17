@@ -12,7 +12,7 @@ class Pin(
     var tags: MutableList<String> = ArrayList()
     var photos: MutableList<Uri> = ArrayList()
     var description: String = ""
-    var mood: UByte = 0u
+    var mood: UByte = 3u
     var date: Date? = null
 }
 

@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import ru.nsu.ccfit.tsd.pinmap.MapActivity
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.adapters.PinAdapter
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinsListBinding
@@ -93,20 +94,11 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
             }
         }
 
-        binding.search.setOnClickListener { FilterDialog().show(childFragmentManager, "map") }
-
-        //TODO: добавить доступ к окну поиска, когда оно будет готово
-/*
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-        })
-*/
+        binding.search.setOnClickListener {
+            val filterDialog = FilterDialog()
+            filterDialog.setFilterListener(this)
+            filterDialog.show(childFragmentManager, "list")
+        }
     }
 
     override fun onFilter(filter: Filter) {

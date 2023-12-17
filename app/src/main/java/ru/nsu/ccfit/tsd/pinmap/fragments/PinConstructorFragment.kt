@@ -2,9 +2,11 @@ package ru.nsu.ccfit.tsd.pinmap.fragments
 
 import android.app.AlertDialog
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +15,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.contract.PickImageContract
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinConstructorBinding
 import ru.nsu.ccfit.tsd.pinmap.fragments.adapters.ImageAdapter
-import ru.nsu.ccfit.tsd.pinmap.fragments.adapters.TagAdapter
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
+import java.util.Date
 
 class PinConstructorFragment() : Fragment() {
     private var _binding: FragmentPinConstructorBinding? = null
@@ -27,11 +28,11 @@ class PinConstructorFragment() : Fragment() {
     private lateinit var pinController: PinController
 
     private lateinit var pin: Pin
-    private var imageDataset = listOf<Uri>()
     private var isPinNew: Boolean = true
 
     private lateinit var alertBuilder: AlertDialog.Builder
 
+    private var imageDataset = listOf<Uri>()
     private val imageAdapter = ImageAdapter(imageDataset)
 
     private val pickImageLauncher =
@@ -51,70 +52,97 @@ class PinConstructorFragment() : Fragment() {
         binding.imagesRecyclerView.adapter = imageAdapter
         binding.imagesRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        val tagDataset = arrayListOf<String?>(null, null, null)
-        val tagAdapter = TagAdapter(tagDataset)
-        binding.tagsRecyclerView.adapter = tagAdapter
-        binding.tagsRecyclerView.layoutManager = LinearLayoutManager(context)
-        //todo тут нужно доработать получение тэгов
-
         if (bundle != null) {
 
-            val name = bundle.getString("name")
-            val safeName: String
-            if (name != null) {
-                safeName = name
-            } else {
-                safeName = ""
+            /*bundle содержит:
+            1. локацию (широта и долгота), если конструктор открыт по созданию нового пина из стартФрагмента
+            2. Uri + локацию (широта и долгота), если конструктор открыт из картинки из галереи
+            3. id, если конструктор открыт по тыку на существующий пин
+
+            плюс он всегда содержит поле type = номер пункта, указанные сверху,
+            в зависимости от того, откуда бандл пришёл*/
+
+            pinController = context?.let { PinController.getController(it) }!!
+
+            when (bundle.getInt("type")){
+                1 -> { // новый пин из карты, режим редактирования
+                    val latitude = bundle.getFloat("latitude")
+
+                    val longitude = bundle.getFloat("longitude")
+
+                    pin = Pin("Новое воспоминание", latitude.toDouble(), longitude.toDouble())
+
+                    // конструктор вызван по созданию нового пина; его нельзя удалять из базы, ибо его там ещё нет!
+                    binding.deleteButton.visibility = View.GONE
+
+                    // чтобы можно было редактировать сразу при открытии фрагмента
+                    enableEdit()
+                    binding.editButton.visibility = View.GONE
+                    binding.deleteButton.visibility = View.GONE
+                    binding.saveButton.visibility = View.VISIBLE
+                    binding.cancelButton.visibility = View.VISIBLE
+                }
+                2 -> { // новый пин из галереи, режим редактирования
+                    val latitude = bundle.getFloat("latitude")
+
+                    val longitude = bundle.getFloat("longitude")
+
+                    val uri = bundle.getString("uri")
+                    pin.photos = mutableListOf(Uri.parse(uri))
+
+                    pin = Pin("Новое воспоминание", latitude.toDouble(), longitude.toDouble())
+
+                    // конструктор вызван по созданию нового пина; его нельзя удалять из базы, ибо его там ещё нет!
+                    binding.deleteButton.visibility = View.GONE
+
+                    // чтобы можно было редактировать сразу при открытии фрагмента
+                    enableEdit()
+                    binding.editButton.visibility = View.GONE
+                    binding.deleteButton.visibility = View.GONE
+                    binding.saveButton.visibility = View.VISIBLE
+                    binding.cancelButton.visibility = View.VISIBLE
+                }
+                3 -> { // существующий пин, режим просмотра
+
+                    isPinNew = false
+
+                    val id = bundle.getInt("id")
+
+                    pin = pinController.getPinById(id)!!
+
+                    // чтобы нельзя было редактировать сразу при открытии фрагмента
+                    disableEdit()
+
+                    binding.editButton.visibility = View.VISIBLE
+                    binding.deleteButton.visibility = View.VISIBLE
+                    binding.saveButton.visibility = View.GONE
+                    binding.cancelButton.visibility = View.GONE
+                }
             }
-            binding.nameText.setText(safeName)
 
-            val latitude = bundle.getFloat("latitude")
-            binding.latitudeText.text = latitude.toString()
+            binding.nameText.text.insert(0, pin.name)
 
-            val longitude = bundle.getFloat("longitude")
-            binding.longitudeText.text = longitude.toString()
+            binding.latitudeText.text = pin.latitude.toString()
 
-            pin = Pin(safeName, latitude.toDouble(), longitude.toDouble())
+            binding.longitudeText.text = pin.longitude.toString()
 
-            if (!(bundle.getBoolean("new"))) { // конструктор вызван по нажатию на существующий пин
-
-                isPinNew = false
-                binding.deleteButton.visibility = View.VISIBLE
-
-                // инициализация объекта на случай его удаления
-                pin.id = bundle.getInt("id")
-
-                binding.descriptionText.setText(bundle.getString("desc"))
-
-                binding.moodSlider.value = bundle.getByte("mood").toFloat()
-
-                //todo сделать обработку случаев когда некоторые поля null или не имеют осмысленных значений
-
-                //todo я планировал использовать recyclerView для тегов и фотографий, мб это не лучшая идея
-                // сейчас однако в xml фрагмента лежат они
-                // тут бы какой-то другой ViewGroup поставить
-
-                //todo тут осталось вытащить и показать настроение, тэги, дату и фотографии
-                //todo надо придумать как красиво показывать локацию (сейчас это просто две координаты...)
-
-                // чтобы нельзя было редактировать сразу при открытии фрагмента
-                disableEdit()
-
-                binding.editButton.visibility = View.VISIBLE
-                binding.deleteButton.visibility = View.VISIBLE
-                binding.saveButton.visibility = View.GONE
-                binding.cancelButton.visibility = View.GONE
-
-            } else { // конструктор вызван по созданию нового пина; его нельзя удалять из базы, ибо его там ещё нет!
-                binding.deleteButton.visibility = View.GONE
-
-                // чтобы можно было редактировать сразу при открытии фрагмента
-                enableEdit()
-                binding.editButton.visibility = View.GONE
-                binding.deleteButton.visibility = View.GONE
-                binding.saveButton.visibility = View.VISIBLE
-                binding.cancelButton.visibility = View.VISIBLE
+            val date = pin.date
+            if (date != null) {
+                val sdf = SimpleDateFormat("yyyy-MM-dd")
+                val dateString: String = sdf.format(date)
+                binding.dateText.setText(dateString)
             }
+
+            binding.descriptionText.setText(pin.description)
+
+            binding.moodSlider.value = pin.mood.toFloat()
+
+            val tagsText = pin.tags.joinToString(separator = ";")
+            binding.tagsText.setText(tagsText)
+
+            imageAdapter.updateList(pin.photos)
+
+            //todo надо придумать как красиво показывать локацию (сейчас это просто две координаты...)
 
         }
 
@@ -126,8 +154,6 @@ class PinConstructorFragment() : Fragment() {
         setCancelButtonListener()
         setSaveButtonListener()
         setDeleteButtonListener()
-
-        pinController = context?.let { PinController.getController(it) }!!
 
         return view
     }
@@ -193,10 +219,9 @@ class PinConstructorFragment() : Fragment() {
 
     private fun setDeleteButtonListener() {
         binding.deleteButton.setOnClickListener { v ->
-
-            alertBuilder.setMessage("Delete pin?")
+            alertBuilder.setMessage("Удалить воспоминание?")
                 .setCancelable(false)
-                .setPositiveButton("Yes") { _, _ ->
+                .setPositiveButton("Да") { _, _ ->
                     val isDeleted = pinController.delete(pin)
                     if (isDeleted) {
                         Toast.makeText(context, "Воспоминание удалено", Toast.LENGTH_SHORT).show()
@@ -211,12 +236,12 @@ class PinConstructorFragment() : Fragment() {
                     }
                 }
                 .setNegativeButton(
-                    "No"
+                    "Нет"
                 ) { _, _ ->
-                    Toast.makeText(context, "Удаление отменено", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Удаление воспоминания отменено", Toast.LENGTH_SHORT).show()
                 }
             val alert: AlertDialog = alertBuilder.create()
-            alert.setTitle("Confirm pin deletion")
+            alert.setTitle("")
             alert.show()
 
         }
@@ -224,19 +249,35 @@ class PinConstructorFragment() : Fragment() {
 
     private fun setSaveButtonListener() {
         binding.saveButton.setOnClickListener { v ->
-            // надо заново считать всё с полей ввода и сунуть в пин, и потом уже сохранить
-            val name = binding.nameText.text.toString()
-            val latitude = binding.latitudeText.text.toString().toDouble()
-            val longitude = binding.longitudeText.text.toString().toDouble()
-            val pin = Pin(name, latitude, longitude)
-            //todo добавить id в pin и делать save по нему + лучше использовать существующее поле
+            // надо заново считать всё с полей ввода и сунуть в пин, и потом уже вызывать save
 
+            pin.name = binding.nameText.text.toString()
+            pin.latitude = binding.latitudeText.text.toString().toDouble()
+            pin.longitude = binding.longitudeText.text.toString().toDouble()
             pin.mood = binding.moodSlider.value.toInt().toUByte()
-            //pin.tags //todo
-            //pin.id //todo
             pin.description = binding.descriptionText.text.toString()
-            //pin.date = binding.dateText.text. //todo
-            //todo картинки ещё
+
+            val formatter = SimpleDateFormat("yyyy-MM-dd")
+            val text = binding.dateText.text.toString()
+            var date : Date
+            try {
+                date = formatter.parse(text)
+            } catch(e : Exception) {
+                date = formatter.parse("1970-01-01")
+            }
+            pin.date = date
+
+            pin.tags = binding.tagsText.text.toString().split(";").toMutableList()
+
+            // проверка того, что пин-объект меняется
+            Log.d("pin", pin.name)
+            Log.d("pin", pin.latitude.toString())
+            Log.d("pin", pin.longitude.toString())
+            Log.d("pin", pin.mood.toString())
+            Log.d("pin", pin.description)
+            Log.d("pin", pin.date.toString())
+            Log.d("pin", pin.tags.toString())
+            Log.d("pin", pin.photos.toString())
 
             val isSaved = pinController.save(pin)
             if (isSaved) {
@@ -276,20 +317,6 @@ class PinConstructorFragment() : Fragment() {
         binding.backButton.setOnClickListener { v ->
             val navController = findNavController()
             navController.popBackStack()
-        }
-    }
-
-    // это нужно чтобы вообще иметь возможность создать фрагмент?
-    // вроде и без него правда что-то создаётся
-    // но через эту хрень явно прокидываются аргументы для создания фрагмента
-    // если это удалить то программа жалуется вроде :(
-    companion object {
-        private const val NAME = "name"
-
-        fun newInstance(string: String) = PinConstructorFragment().apply {
-            arguments = Bundle(1).apply {
-                putString(NAME, string)
-            }
         }
     }
 

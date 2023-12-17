@@ -3,28 +3,31 @@ package ru.nsu.ccfit.tsd.pinmap
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.navigation.findNavController
-import androidx.navigation.ui.setupActionBarWithNavController
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 import ru.nsu.ccfit.tsd.pinmap.databinding.ActivityMainBinding
 import ru.nsu.ccfit.tsd.pinmap.filter.Filter
 import ru.nsu.ccfit.tsd.pinmap.filter.FilterDialog
+import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 
 class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
 
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map: MapView
+
     private lateinit var pinController: PinController
 
     private lateinit var binding: ActivityMainBinding
@@ -34,6 +37,8 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        pinController = PinController.getController(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -117,10 +122,30 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
         }
     }
 
-
     override fun onFilter(filter: Filter) {
-        // TODO: Заменить логикой поиска
         Toast.makeText(this, "Вызван поиск на карте", Toast.LENGTH_SHORT).show()
+        showPinsOnMap(pinController.getFilteredPins(filter))
+        findViewById<FloatingActionButton>(R.id.showAllMarkersFab).visibility = View.VISIBLE
+    }
+
+    fun showPinsOnMap(newPins : MutableList<Pin>){
+        val res = this.resources
+        val pinImage = ResourcesCompat.getDrawable(res, R.drawable.pin_marker, null)
+        map.overlays.forEach {
+            map.overlays.remove(it)
+            map.invalidate()
+        }
+        for (pin in newPins){
+            val marker = PinMarker(map, this, pin)
+            marker.position = GeoPoint(pin.latitude, pin.longitude)
+            marker.icon = pinImage
+            marker.setAnchor(
+                Marker.ANCHOR_CENTER,
+                Marker.ANCHOR_BOTTOM
+            )
+            map.overlays.add(marker)
+            map.invalidate()
+        }
     }
 
     // Код для дефолтного тулбара
