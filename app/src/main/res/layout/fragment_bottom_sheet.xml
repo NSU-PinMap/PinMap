@@ -1,39 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     android:background="@color/black"
     tools:context=".fragments.BottomSheetFragment">
 
     <Button
         android:id="@+id/buttonSearch"
-        android:layout_width="100dp"
+        android:layout_width="0dp"
         android:layout_height="80dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
         android:drawableTop="@drawable/ic_search_foreground"
-        android:text="Search"
-        app:layout_constraintStart_toEndOf="@+id/buttonTheme"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Search"/>
 
     <Button
         android:id="@+id/buttonTheme"
-        android:layout_width="100dp"
+        android:layout_width="0dp"
         android:layout_height="80dp"
-        android:layout_marginStart="34dp"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
         android:text="Themes"
-        android:drawableTop="@drawable/ic_themes_foreground"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:drawableTop="@drawable/ic_themes_foreground"/>
 
     <Button
         android:id="@+id/buttonMainMenu"
-        android:layout_width="100dp"
+        android:layout_width="0dp"
         android:layout_height="80dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
         android:drawableTop="@drawable/ic_mainmenu_foreground"
-        android:text="Menu"
-        app:layout_constraintStart_toEndOf="@+id/buttonSearch"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:text="Menu"/>
+
+    <Button
+        android:id="@+id/buttonGallery"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_weight="1"
+        android:drawableTop="@drawable/ic_mainmenu_foreground"
+        android:text="Gallery"/>
+</LinearLayout>

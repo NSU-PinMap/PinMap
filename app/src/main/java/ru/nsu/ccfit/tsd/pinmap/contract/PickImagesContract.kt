@@ -7,13 +7,12 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
 
-class PickImageContract : ActivityResultContract<List<Uri>, List<Uri>>() {
+class PickImagesContract : ActivityResultContract<List<Uri>, List<Uri>>() {
 
     override fun createIntent(context: Context, input: List<Uri>): Intent {
         val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
         galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        //TODO отправлять по интенту входящие фотки
 
         return galleryIntent
     }

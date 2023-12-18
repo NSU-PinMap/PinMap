@@ -15,11 +15,18 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import ru.nsu.ccfit.tsd.pinmap.contract.PickImageContract
+import io.ak1.pix.helpers.PixEventCallback
+import io.ak1.pix.helpers.pixFragment
+import io.ak1.pix.models.Flash
+import io.ak1.pix.models.Mode
+import io.ak1.pix.models.Options
+import io.ak1.pix.models.Ratio
+import ru.nsu.ccfit.tsd.pinmap.contract.PickImagesContract
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinConstructorBinding
 import ru.nsu.ccfit.tsd.pinmap.fragments.adapters.ImageAdapter
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
+import java.util.ArrayList
 import java.util.Date
 
 class PinConstructorFragment() : Fragment() {
@@ -36,7 +43,7 @@ class PinConstructorFragment() : Fragment() {
     private val imageAdapter = ImageAdapter(imageDataset)
 
     private val pickImageLauncher =
-        registerForActivityResult(PickImageContract()) { photos ->
+        registerForActivityResult(PickImagesContract()) { photos ->
             imageDataset = photos
             imageAdapter.updateList(photos)
         }
@@ -75,6 +82,7 @@ class PinConstructorFragment() : Fragment() {
                     // конструктор вызван по созданию нового пина; его нельзя удалять из базы, ибо его там ещё нет!
                     binding.deleteButton.visibility = View.GONE
 
+                    Log.d("pin","setImageUpdateButtonListener")
                     // чтобы можно было редактировать сразу при открытии фрагмента
                     enableEdit()
                     binding.editButton.visibility = View.GONE
@@ -212,6 +220,7 @@ class PinConstructorFragment() : Fragment() {
     private fun setImageUpdateButtonListener() {
         binding.updateImageButton.setOnClickListener{
 
+            Log.d("pin","setImageUpdateButtonListener")
             pickImageLauncher.launch(imageDataset)
 
         }
