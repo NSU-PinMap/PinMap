@@ -53,12 +53,6 @@ class TagsListFragment : Fragment() {
         pinController = PinController.getController(requireContext())
         val navController = findNavController()
 
-        // Список тегов пустой, поэтому для проверки тут создавался пин с тегами
-/*
-        val pin1 = Pin("cat1", 30.9, 42.1)
-        pin1.tags = mutableListOf("catTag1", "catTag2", "catTag0")
-        pinController.save(pin1)
-*/
         tagsList = mutableListOf()
         tagsList.addAll(pinController.getAllTags())
         tagListAdapter = TagListAdapter(tagsList, navController)

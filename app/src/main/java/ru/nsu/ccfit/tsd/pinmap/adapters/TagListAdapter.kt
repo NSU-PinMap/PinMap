@@ -31,6 +31,10 @@ class TagListAdapter(private val tags: MutableList<String>,
 
             itemView.setOnClickListener {
                 val bundle = Bundle()
+                // В bundle кладём тип перехода
+                // (с аргументами он вообще всего один, но так не придётся везде это менять, если потребуется второй)
+                // и выбранный тег
+                bundle.putInt("type", 1)
                 bundle.putString("tag", tag)
                 navController.navigate(R.id.pinsListFragment, bundle)
             }

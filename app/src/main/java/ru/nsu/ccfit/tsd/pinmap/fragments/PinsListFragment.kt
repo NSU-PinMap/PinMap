@@ -46,14 +46,21 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
         recyclerView.adapter = pinAdapter
 
         // При переходе в список пинов из списка тегов по нажатию на тег
-        // Получаем тег в виде строки, вызываем onFilter с ним
+        // получаем тег в виде строки, вызываем onFilter с ним
         val bundle = arguments
         if (null != bundle) {
-            val tag = bundle.getString("tag")
-            val filter = Filter()
-            if (tag != null) {
-                filter.hasTags.add(tag)
-                onFilter(filter)
+            // На самом деле других типов переходов с аргументами нет,
+            // но если оно появятся, то так не придётся исправлять аргументы в TagListAdapter
+            val type = bundle.getInt("type")
+
+            // Получаем из bundle выбранный тег и фильтруем по нему
+            if (1 == type) {
+                val tag = bundle.getString("tag")
+                val filter = Filter()
+                if (tag != null) {
+                    filter.hasTags.add(tag)
+                    onFilter(filter)
+                }
             }
         }
 
