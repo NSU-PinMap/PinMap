@@ -26,6 +26,7 @@ class SQLitePinStorage(context: Context) : PinStorage {
         val id = db.pinDao()!!.insertPin(PinMapper.pinToEntity(db, pin))
         if (pin.id != null) {
             deletePinTags(pin.id!!.toLong())
+            deletePinPhotos(pin.id!!.toLong())
         }
 
         saveTags(id, pin.tags)
