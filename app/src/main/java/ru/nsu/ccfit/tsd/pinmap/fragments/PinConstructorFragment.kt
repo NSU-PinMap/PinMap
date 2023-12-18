@@ -15,18 +15,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.ak1.pix.helpers.PixEventCallback
-import io.ak1.pix.helpers.pixFragment
-import io.ak1.pix.models.Flash
-import io.ak1.pix.models.Mode
-import io.ak1.pix.models.Options
-import io.ak1.pix.models.Ratio
 import ru.nsu.ccfit.tsd.pinmap.contract.PickImagesContract
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinConstructorBinding
 import ru.nsu.ccfit.tsd.pinmap.fragments.adapters.ImageAdapter
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
-import java.util.ArrayList
 import java.util.Date
 
 class PinConstructorFragment() : Fragment() {

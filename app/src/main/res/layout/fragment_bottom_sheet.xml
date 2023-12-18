@@ -43,6 +43,6 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_weight="1"
-        android:drawableTop="@drawable/ic_mainmenu_foreground"
+        android:drawableTop="@drawable/ic_gallery_foreground"
         android:text="Gallery"/>
 </LinearLayout>

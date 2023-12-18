@@ -42,6 +42,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         mainMenuButton.setOnClickListener { controller.navigate(R.id.mainMenuFragment) }
 
         val galleryButton = view.findViewById<Button>(R.id.buttonGallery)
-        galleryButton.setOnClickListener {   }
+        galleryButton.setOnClickListener {  controller.navigate(R.id.galleryFragment) }
     }
 }
