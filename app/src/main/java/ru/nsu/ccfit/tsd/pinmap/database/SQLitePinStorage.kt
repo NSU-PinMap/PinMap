@@ -98,7 +98,7 @@ class SQLitePinStorage(context: Context) : PinStorage {
         db.photoDao().deletePinPhotos(pinId)
     }
 
-    fun getFilteredPins(filter: Filter): MutableList<Pin> {
+    override fun getFilteredPins(filter: Filter): MutableList<Pin> {
         var pins = db.pinDao().getAllPins()
         if (filter.textIncludes.isNotEmpty()) {
             for (text in filter.textIncludes) {
