@@ -2,6 +2,7 @@ package ru.nsu.ccfit.tsd.pinmap.pins
 
 import android.content.Context
 import ru.nsu.ccfit.tsd.pinmap.database.SQLitePinStorage
+import ru.nsu.ccfit.tsd.pinmap.filter.Filter
 
 class PinController private constructor(context: Context) {
     companion object {
@@ -46,5 +47,13 @@ class PinController private constructor(context: Context) {
 
     fun getAllTags(): MutableList<String> {
         return pinStorage.getAllTags()
+    }
+
+    fun getFilteredPins(filter: Filter): MutableList<Pin> {
+        return pinStorage.getFilteredPins(filter)
+    }
+
+    fun getPinById(id: Int): Pin? {
+        return pinStorage.getPinById(id) // TODO: Проверить корректность реализации
     }
 }

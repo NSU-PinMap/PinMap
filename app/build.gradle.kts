@@ -50,6 +50,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.preference:preference:1.2.1")
     implementation("org.osmdroid:osmdroid-android:6.1.17")
+    implementation ("com.squareup.picasso:picasso:2.8")
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.2")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.2")
     implementation("androidx.room:room-common:2.6.0")

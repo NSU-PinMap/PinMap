@@ -81,14 +81,14 @@
                 android:ems="10"
                 android:inputType="text"
                 android:minHeight="48dp"
-                android:text="Name" />
+                android:hint="Имя воспоминания" />
 
             <EditText
                 android:id="@+id/dateText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Date"
+                android:hint="yyyy-mm-dd"
                 android:inputType="date"
                 android:minHeight="48dp" />
 
@@ -99,7 +99,7 @@
                 android:ems="10"
                 android:inputType="text"
                 android:minHeight="48dp"
-                android:text="Description" />
+                android:hint="Описание воспоминания" />
 
             <TextView
                 android:id="@+id/latitudeText"
@@ -113,10 +113,15 @@
                 android:layout_height="wrap_content"
                 android:text="Longitude" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/tagsRecyclerView"
+            <EditText
+                android:id="@+id/tagsText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:minHeight="48dp"
+                android:hint="Тэги (через точку с запятой)" />
+
 
             <com.google.android.material.slider.Slider
                 android:id="@+id/moodSlider"
@@ -125,6 +130,12 @@
                 android:valueFrom="1.0"
                 android:valueTo="5.0"
                 android:stepSize="1.0"  />
+            <Button
+                android:id="@+id/updateImageButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Edit Photo"
+                />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/imagesRecyclerView"

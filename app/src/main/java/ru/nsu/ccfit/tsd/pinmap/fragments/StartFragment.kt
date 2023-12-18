@@ -7,28 +7,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
 import ru.nsu.ccfit.tsd.pinmap.MapActivity
-import ru.nsu.ccfit.tsd.pinmap.PinMarker
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentStartBinding
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 
-class StartFragment : Fragment() {
+class StartFragment : Fragment(){
 
     private var _binding: FragmentStartBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var pinController: PinController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentStartBinding.inflate(inflater, container, false)
+        pinController = context?.let { PinController.getController(it) }!!
         return binding.root
     }
 
@@ -45,11 +44,11 @@ class StartFragment : Fragment() {
         setCancelMarkerFabClickListener()
         setZoomInFabClickListener()
         setZoomOutFabClickListener()
+        setShowAllMarkersFabClickListener()
 
     }
 
     private fun setZoomInFabClickListener() {
-        //todo этой кнопке надо размер иконки поменять чуть-чуть
         binding.zoomInFab.setOnClickListener { view ->
             view.rootView.findViewById<MapView>(R.id.map).controller.zoomIn()
         }
@@ -85,8 +84,7 @@ class StartFragment : Fragment() {
             val map = view.rootView.findViewById<MapView>(R.id.map)
 
             val bundle = Bundle()
-            bundle.putBoolean("new", true)
-            bundle.putString("name", "Новое воспоминание")
+            bundle.putInt("type", 1)
             val geoPoint = map.mapCenter
             bundle.putFloat("latitude", geoPoint.latitude.toFloat())
             bundle.putFloat("longitude", geoPoint.longitude.toFloat())
@@ -96,27 +94,17 @@ class StartFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        val pinController = PinController.getController(requireContext().applicationContext)
-        val pins = pinController.getAllPins()
-        val map = requireView().rootView.findViewById<MapView>(R.id.map)
-        val res = this.resources
-        val pinImage = ResourcesCompat.getDrawable(res, R.drawable.pin_marker, null)
-        map.overlays.forEach {
-            map.overlays.remove(it)
-            map.invalidate()
-        }
-        for (pin in pins){
-            val marker = PinMarker(map, activity as MapActivity, pin)
-            marker.position = GeoPoint(pin.latitude, pin.longitude)
-            marker.icon = pinImage
-            marker.setAnchor(
-                Marker.ANCHOR_CENTER,
-                Marker.ANCHOR_BOTTOM
-            )
-            map.overlays.add(marker)
-            map.invalidate()
+    private fun setShowAllMarkersFabClickListener() {
+        binding.showAllMarkersFab.setOnClickListener { view ->
+            (activity as MapActivity).showPinsOnMap(pinController.getAllPins())
+            view.visibility = View.GONE
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        val pins = pinController.getAllPins()
+        (activity as MapActivity).showPinsOnMap(pins)
+    }
+
 }

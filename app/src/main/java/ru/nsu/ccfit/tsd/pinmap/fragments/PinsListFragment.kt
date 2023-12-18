@@ -11,14 +11,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import ru.nsu.ccfit.tsd.pinmap.MapActivity
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.adapters.PinAdapter
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinsListBinding
-import ru.nsu.ccfit.tsd.pinmap.pins.Pin
+import ru.nsu.ccfit.tsd.pinmap.filter.Filter
+import ru.nsu.ccfit.tsd.pinmap.filter.FilterDialog
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 
 
-class PinsListFragment : Fragment() {
+class PinsListFragment : Fragment(), FilterDialog.Filterable {
     private var _binding: FragmentPinsListBinding? = null
     private val binding get() = _binding!!
 
@@ -87,5 +89,16 @@ class PinsListFragment : Fragment() {
                 previousOptionsPosition = position
             }
         }
+
+        binding.search.setOnClickListener {
+            val filterDialog = FilterDialog()
+            filterDialog.setFilterListener(this)
+            filterDialog.show(childFragmentManager, "list")
+        }
+    }
+
+    override fun onFilter(filter: Filter) {
+        // TODO: Заменить логикой поиска
+        Toast.makeText(context, "Вызван поиск в списке", Toast.LENGTH_SHORT).show()
     }
 }

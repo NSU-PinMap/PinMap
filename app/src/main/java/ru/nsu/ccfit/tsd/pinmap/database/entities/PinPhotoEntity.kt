@@ -4,6 +4,6 @@ import androidx.room.Entity
 
 @Entity(tableName = "pin_photo", primaryKeys = ["pinId", "photoId"])
 data class PinPhotoEntity(
-    var pinId: Int,
-    var photoId: Int
+    var pinId: Long,
+    var photoId: Long
 )

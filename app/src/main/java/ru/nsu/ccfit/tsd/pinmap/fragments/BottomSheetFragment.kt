@@ -8,6 +8,8 @@ import android.widget.Button
 import androidx.navigation.fragment.findNavController
 import ru.nsu.ccfit.tsd.pinmap.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import ru.nsu.ccfit.tsd.pinmap.MapActivity
+import ru.nsu.ccfit.tsd.pinmap.filter.FilterDialog
 
 class BottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
@@ -29,7 +31,12 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         themes_button.setOnClickListener { controller.navigate(R.id.themesFragment) }
 
         val searchButton = view.findViewById<Button>(R.id.buttonSearch)
-        // Она пока висит без дела
+        searchButton.setOnClickListener {
+            findNavController().popBackStack()
+            val filterDialog = FilterDialog()
+            filterDialog.setFilterListener(activity as MapActivity)
+            filterDialog.show(parentFragmentManager, "map")
+        }
 
         val mainMenuButton = view.findViewById<Button>(R.id.buttonMainMenu)
         mainMenuButton.setOnClickListener { controller.navigate(R.id.mainMenuFragment) }
