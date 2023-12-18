@@ -52,7 +52,7 @@ class PinAdapter(private val pins: MutableList<Pin>, private val navController: 
         private fun onPinPressed(pin: Pin, navController: NavController) {
             val bundle = Bundle()
 
-            bundle.putBoolean("new", true)
+            bundle.putInt("type", 3)
             bundle.putInt("id", pin.id!!)
 
             navController.navigate(R.id.pinConstructorFragment, bundle)
