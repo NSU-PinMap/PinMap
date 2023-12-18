@@ -102,7 +102,7 @@ class SQLitePinStorage(context: Context) : PinStorage {
         var pins = db.pinDao().getAllPins()
         if (filter.textIncludes.isNotEmpty()) {
             for (text in filter.textIncludes) {
-                pins = pins.filter { pin -> pin.description.contains(text) }
+                pins = pins.filter { pin -> (pin.description.contains(text) || pin.name.contains(text)) }
             }
         }
         if (filter.hasTags.isNotEmpty()) {

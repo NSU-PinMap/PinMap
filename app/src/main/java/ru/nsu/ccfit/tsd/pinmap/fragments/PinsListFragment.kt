@@ -1,23 +1,24 @@
 package ru.nsu.ccfit.tsd.pinmap.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import ru.nsu.ccfit.tsd.pinmap.MapActivity
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.adapters.PinAdapter
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinsListBinding
 import ru.nsu.ccfit.tsd.pinmap.filter.Filter
 import ru.nsu.ccfit.tsd.pinmap.filter.FilterDialog
+import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 import ru.nsu.ccfit.tsd.pinmap.pins.PinController
+import java.util.Date
 
 
 class PinsListFragment : Fragment(), FilterDialog.Filterable {
@@ -25,11 +26,15 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
     private val binding get() = _binding!!
 
     private lateinit var pinController: PinController
+
     private lateinit var pinAdapter: PinAdapter
+    private lateinit var pinsList: MutableList<Pin>
 
     private lateinit var sortOptions: Array<String>
     private lateinit var sortAdapter: ArrayAdapter<String>
     private lateinit var sortMenu: AutoCompleteTextView
+
+    private var previousSortPosition = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,14 +59,48 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
         pinController = PinController.getController(requireContext())
 
         // Передаём пины из pinController в PinAdapter
-        pinAdapter = PinAdapter(pinController.getAllPins(), controller)
+        pinsList = mutableListOf()
+        pinsList.addAll(pinController.getAllPins())
+        pinAdapter = PinAdapter(pinsList, controller)
 
         val recyclerView = binding.rcPins
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = pinAdapter
 
+        sortOptions = resources.getStringArray(R.array.pins_sort_dropdown_options)
+        sortAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, sortOptions)
+        sortMenu = view.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
+        sortMenu.setAdapter(sortAdapter)
+
+        sortMenu.setOnItemClickListener { _, _, position, _ ->
+            // value -- это String-значение выбранной опции, а position -- её int-номер в менюшке
+            val value = sortAdapter.getItem(position) ?: ""
+
+            // TODO: сделать что-нибудь с этой страшной чередой if'ов
+            if (position != previousSortPosition) {
+                sort(value)
+
+                // в конце назначаем текущий номер опции предыдущим
+                previousSortPosition = position
+            }
+        }
+
+        binding.search.setOnClickListener {
+            val filterDialog = FilterDialog()
+            filterDialog.setFilterListener(this)
+            filterDialog.show(childFragmentManager, "list")
+        }
+
+        val returnArrow = binding.returnToAllPinsView
+        returnArrow.setOnClickListener {
+            pinAdapter.setPins(pinsList)
+            returnArrow.visibility = View.INVISIBLE
+            updateOrder()
+        }
+
         // При переходе в список пинов из списка тегов по нажатию на тег
         // получаем тег в виде строки, вызываем onFilter с ним
+
         val bundle = arguments
         if (null != bundle) {
             // На самом деле других типов переходов с аргументами нет,
@@ -71,53 +110,49 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
             // Получаем из bundle выбранный тег и фильтруем по нему
             if (1 == type) {
                 val tag = bundle.getString("tag")
-                val filter = Filter()
+                var filter = Filter()
                 if (tag != null) {
                     filter.hasTags.add(tag)
                     onFilter(filter)
                 }
             }
         }
+    }
 
-        sortOptions = resources.getStringArray(R.array.pins_sort_dropdown_options)
-        sortAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, sortOptions)
-        sortMenu = view.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
-        sortMenu.setAdapter(sortAdapter)
+    private fun sort(value: String) {
+        val optionSortAlphabetically = resources.getText(R.string.optionSortAlphabetically).toString()
+        val optionSortDescAlphabetically = resources.getText(R.string.optionSortDescAlphabetically).toString()
+        val optionDateSort = resources.getText(R.string.optionDateSort).toString()
+        val optionDescDateSort = resources.getText(R.string.optionDescDateSort).toString()
 
-        var previousOptionsPosition = -1
+        if (value == optionSortAlphabetically)
+            pinAdapter.sortAlphabetically()
 
-        sortMenu.setOnItemClickListener { _, _, position, _ ->
-            // value -- это String-значение выбранной опции, а position -- её int-номер в менюшке
-            val value = sortAdapter.getItem(position) ?: ""
+        if (value == optionSortDescAlphabetically)
+            pinAdapter.sortDescAlphabetically()
 
-            // TODO: сделать что-нибудь с этой страшной чередой if'ов
-            if (position != previousOptionsPosition) {
-                if (value == "алфавиту [А->Я]")
-                    pinAdapter.sortAlphabetically()
+        if (value == optionDateSort)
+            pinAdapter.sortByDate()
 
-                if (value == "алфавиту [Я->А]")
-                    pinAdapter.sortDescAlphabetically()
+        if (value == optionDescDateSort)
+            pinAdapter.sortedDescByDate()
+    }
 
-                if (value == "дате [старые->новые]")
-                    pinAdapter.sortByDate()
-
-                if (value == "дате [новые->старые]")
-                    pinAdapter.sortedDescByDate()
-
-                // в конце назначаем текущий номер опции предыдущим
-                previousOptionsPosition = position
-            }
-        }
-
-        binding.search.setOnClickListener {
-            val filterDialog = FilterDialog()
-            filterDialog.setFilterListener(this)
-            filterDialog.show(childFragmentManager, "list")
-        }
+    private fun updateOrder() {
+        if (-1 == previousSortPosition)
+            sort(sortOptions[0])
+        else
+            sort(sortOptions[previousSortPosition])
     }
 
     override fun onFilter(filter: Filter) {
-        // TODO: Заменить логикой поиска
-        Toast.makeText(context, "Вызван поиск в списке", Toast.LENGTH_SHORT).show()
+        val returnArrow = binding.returnToAllPinsView
+        returnArrow.visibility = View.VISIBLE
+
+        val filteredPins = pinController.getFilteredPins(filter)
+
+        pinAdapter.setPins(filteredPins)
+
+        updateOrder()
     }
 }

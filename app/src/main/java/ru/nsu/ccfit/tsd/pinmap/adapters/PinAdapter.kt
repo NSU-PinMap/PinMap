@@ -73,6 +73,11 @@ class PinAdapter(private val pins: MutableList<Pin>, private val navController: 
         holder.bind(item, navController)
     }
 
+    fun setPins(newPins: MutableList<Pin>) {
+        pinList = newPins
+        notifyDataSetChanged()
+    }
+
     fun sortAlphabetically() {
         val comparator = Comparator<Pin> { pin1, pin2 -> pin1.name.compareTo(pin2.name)}
         pinList.sortWith(comparator)
