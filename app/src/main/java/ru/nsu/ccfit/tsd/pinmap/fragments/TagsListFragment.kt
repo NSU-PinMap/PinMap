@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.SearchView
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.adapters.TagListAdapter
@@ -20,6 +21,10 @@ class TagsListFragment : Fragment() {
     private lateinit var pinController: PinController
     private lateinit var tagListAdapter: TagListAdapter
     private lateinit var tagsList: MutableList<String>
+
+    private lateinit var sortOptions: Array<String>
+    private lateinit var optionsArrayAdapter: ArrayAdapter<String>
+    private lateinit var sortMenu: AutoCompleteTextView
 
     // В этой переменной лежит позиция последней выбранной сортировки в массиве options
     // (см. в функции onViewCreated и tags_sort_dropdown_options в strings.xml)
@@ -37,32 +42,34 @@ class TagsListFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        optionsArrayAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, sortOptions)
+        sortMenu.setAdapter(optionsArrayAdapter)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         pinController = PinController.getController(requireContext())
+        val navController = findNavController()
 
-        // Поскольку у нас пока нельзя проверить работу с тегами через pinController, я проверяла на списке строк
-        tagsList = mutableListOf("tag1", "tag2", "meow2",
-                                 "tag40", "tag3", "tag4",
-                                 "tag6", "tag7", "tag8",
-                                 "tag9", "tag10", "meow1")
-        tagListAdapter = TagListAdapter(tagsList)
-
-        // Позже заменить на это:
+        // Список тегов пустой, поэтому для проверки тут создавался пин с тегами
 /*
+        val pin1 = Pin("cat1", 30.9, 42.1)
+        pin1.tags = mutableListOf("catTag1", "catTag2", "catTag0")
+        pinController.save(pin1)
+*/
         tagsList = mutableListOf()
         tagsList.addAll(pinController.getAllTags())
-        tagListAdapter = TagListAdapter(tagsList)
-*/
+        tagListAdapter = TagListAdapter(tagsList, navController)
+
         val recyclerView = binding.rcTags
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = tagListAdapter
 
-        // NavController потребуется для перехода по нажатию на элемент списка в PinConctructor
-        //val controller = findNavController()
-
-        val options = resources.getStringArray(R.array.tags_sort_dropdown_options)
-        val optionsArrayAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, options)
-        val sortMenu = view.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
+        sortOptions = resources.getStringArray(R.array.tags_sort_dropdown_options)
+        optionsArrayAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, sortOptions)
+        sortMenu = view.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
         sortMenu.setAdapter(optionsArrayAdapter)
 
         sortMenu.setOnItemClickListener { _, _, position, _ ->

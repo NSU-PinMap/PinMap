@@ -1,13 +1,21 @@
 package ru.nsu.ccfit.tsd.pinmap.adapters
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.databinding.TaglistItemBinding
+import ru.nsu.ccfit.tsd.pinmap.fragments.PinsListFragment
 
-class TagListAdapter(private val tags: MutableList<String>) : RecyclerView.Adapter<TagListAdapter.TagListHolder>() {
+class TagListAdapter(private val tags: MutableList<String>,
+                     private val navController: NavController)
+    : RecyclerView.Adapter<TagListAdapter.TagListHolder>() {
+
     private var tagList = mutableListOf<String>()
 
     init {
@@ -18,8 +26,14 @@ class TagListAdapter(private val tags: MutableList<String>) : RecyclerView.Adapt
     class TagListHolder(item: View) : RecyclerView.ViewHolder(item) {
         private val binding = TaglistItemBinding.bind(item)
 
-        fun bind(tag: String) = with(binding) {
+        fun bind(tag: String, navController: NavController) = with(binding) {
             tagNameTextView.text = tag
+
+            itemView.setOnClickListener {
+                val bundle = Bundle()
+                bundle.putString("tag", tag)
+                navController.navigate(R.id.pinsListFragment, bundle)
+            }
         }
     }
 
@@ -34,7 +48,7 @@ class TagListAdapter(private val tags: MutableList<String>) : RecyclerView.Adapt
     }
 
     override fun onBindViewHolder(holder: TagListHolder, position: Int) {
-        holder.bind(tagList[position])
+        holder.bind(tagList[position], navController)
     }
 
     fun setTags(newTags: MutableList<String>) {

@@ -36,26 +36,7 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // NavController нужен, чтобы позже из списка по нажатию переходить в конструктор
-        //val controller = findNavController()
-
-        // Код для навигации по стрелке назад в кастомном тулбаре
-/*
-        val toolbar = binding.toolbar
-        // тут нужно будет поменять картинку с лупы на back arrow
-        toolbar.setNavigationIcon(R.drawable.ic_search_foreground)
-        toolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
-*/
-
         pinController = PinController.getController(requireContext())
-
-        // Проверка корректности выгрузки пинов и появления их в recycler view
-        // TODO: протестировать с добавлением пина на карте
-        /*
-        val pin1 = Pin("pin1", 47.6, 2.1944)
-        pin1.date = Date(9, 5, 7)
-        pinController.save(pin1)
-        */
 
         // Передаём пины из pinController в PinAdapter
         pinAdapter = PinAdapter(pinController.getAllPins())
@@ -63,6 +44,18 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
         val recyclerView = binding.rcPins
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = pinAdapter
+
+        // При переходе в список пинов из списка тегов по нажатию на тег
+        // Получаем тег в виде строки, вызываем onFilter с ним
+        val bundle = arguments
+        if (null != bundle) {
+            val tag = bundle.getString("tag")
+            val filter = Filter()
+            if (tag != null) {
+                filter.hasTags.add(tag)
+                onFilter(filter)
+            }
+        }
 
         val options = resources.getStringArray(R.array.pins_sort_dropdown_options)
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, options)
