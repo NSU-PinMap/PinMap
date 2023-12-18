@@ -36,7 +36,6 @@
         android:layout_marginBottom="90dp"
         android:contentDescription="Show all markers irrespective of filters"
         android:src="@drawable/ic_undo_foreground"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/zoomInFab"
         app:layout_constraintEnd_toEndOf="parent" />
 

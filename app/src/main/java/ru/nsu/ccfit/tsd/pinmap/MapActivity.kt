@@ -25,6 +25,8 @@ import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 
 class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
 
+    private var filter: Filter? = null
+
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map: MapView
 
@@ -122,10 +124,23 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
         }
     }
 
+    fun refreshMap() {
+        if (filter != null)
+            showPinsOnMap(pinController.getFilteredPins(filter!!))
+        else
+            showPinsOnMap(pinController.getAllPins())
+    }
+
     override fun onFilter(filter: Filter) {
         Toast.makeText(this, "Вызван поиск на карте", Toast.LENGTH_SHORT).show()
-        showPinsOnMap(pinController.getFilteredPins(filter))
+        this.filter = filter
+        refreshMap()
         findViewById<FloatingActionButton>(R.id.showAllMarkersFab).visibility = View.VISIBLE
+    }
+
+    fun clearFilter() {
+        filter = null
+        refreshMap()
     }
 
     fun showPinsOnMap(newPins : MutableList<Pin>){
@@ -146,6 +161,10 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
             map.overlays.add(marker)
             map.invalidate()
         }
+    }
+
+    fun isFiltered() : Boolean {
+        return filter != null
     }
 
     // Код для дефолтного тулбара

@@ -23,8 +23,13 @@ import ru.nsu.ccfit.tsd.pinmap.pins.PinController
 class PinsListFragment : Fragment(), FilterDialog.Filterable {
     private var _binding: FragmentPinsListBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var pinController: PinController
     private lateinit var pinAdapter: PinAdapter
+
+    private lateinit var sortOptions: Array<String>
+    private lateinit var sortAdapter: ArrayAdapter<String>
+    private lateinit var sortMenu: AutoCompleteTextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,11 +40,21 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        sortAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, sortOptions)
+        sortMenu.setAdapter(sortAdapter)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // NavController нужен, чтобы позже из списка по нажатию переходить в конструктор
+        val controller = findNavController()
+
         pinController = PinController.getController(requireContext())
 
         // Передаём пины из pinController в PinAdapter
-        pinAdapter = PinAdapter(pinController.getAllPins())
+        pinAdapter = PinAdapter(pinController.getAllPins(), controller)
 
         val recyclerView = binding.rcPins
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -64,16 +79,16 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
             }
         }
 
-        val options = resources.getStringArray(R.array.pins_sort_dropdown_options)
-        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, options)
-        val sortMenu = view.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
-        sortMenu.setAdapter(arrayAdapter)
+        sortOptions = resources.getStringArray(R.array.pins_sort_dropdown_options)
+        sortAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, sortOptions)
+        sortMenu = view.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
+        sortMenu.setAdapter(sortAdapter)
 
         var previousOptionsPosition = -1
 
         sortMenu.setOnItemClickListener { _, _, position, _ ->
             // value -- это String-значение выбранной опции, а position -- её int-номер в менюшке
-            val value = arrayAdapter.getItem(position) ?: ""
+            val value = sortAdapter.getItem(position) ?: ""
 
             // TODO: сделать что-нибудь с этой страшной чередой if'ов
             if (position != previousOptionsPosition) {

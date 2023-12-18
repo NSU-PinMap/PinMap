@@ -95,16 +95,16 @@ class StartFragment : Fragment(){
     }
 
     private fun setShowAllMarkersFabClickListener() {
+        binding.showAllMarkersFab.visibility = if ((activity as MapActivity).isFiltered()) View.VISIBLE else View.GONE
         binding.showAllMarkersFab.setOnClickListener { view ->
-            (activity as MapActivity).showPinsOnMap(pinController.getAllPins())
+            (activity as MapActivity).clearFilter()
             view.visibility = View.GONE
         }
     }
 
     override fun onResume() {
         super.onResume()
-        val pins = pinController.getAllPins()
-        (activity as MapActivity).showPinsOnMap(pins)
+        (activity as MapActivity).refreshMap()
     }
 
 }
