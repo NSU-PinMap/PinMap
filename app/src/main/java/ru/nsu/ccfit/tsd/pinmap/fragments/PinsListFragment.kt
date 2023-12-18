@@ -60,6 +60,25 @@ class PinsListFragment : Fragment(), FilterDialog.Filterable {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = pinAdapter
 
+        // При переходе в список пинов из списка тегов по нажатию на тег
+        // получаем тег в виде строки, вызываем onFilter с ним
+        val bundle = arguments
+        if (null != bundle) {
+            // На самом деле других типов переходов с аргументами нет,
+            // но если оно появятся, то так не придётся исправлять аргументы в TagListAdapter
+            val type = bundle.getInt("type")
+
+            // Получаем из bundle выбранный тег и фильтруем по нему
+            if (1 == type) {
+                val tag = bundle.getString("tag")
+                val filter = Filter()
+                if (tag != null) {
+                    filter.hasTags.add(tag)
+                    onFilter(filter)
+                }
+            }
+        }
+
         sortOptions = resources.getStringArray(R.array.pins_sort_dropdown_options)
         sortAdapter = ArrayAdapter(requireContext(), R.layout.sort_dropdown_item, sortOptions)
         sortMenu = view.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
