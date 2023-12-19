@@ -1,6 +1,7 @@
 package ru.nsu.ccfit.tsd.pinmap.filter
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,13 +62,24 @@ class FilterDialog: BottomSheetDialogFragment() {
         }
 
         binding.searchButton.setOnClickListener {
+            //TODO: поскольку поиск по тегам происходит только по полному слову
+            // (т.е. вы не можете найти строку "tag1" по строке "ta")
+            // поиск перестаёт работать, если ему в тегах передать пустую строчку,
+            // а это происходит автоматически, если поле тегов не заполнено.
+            // Я поставила проверку на пустую строку, но, возможно, это стоит делать иначе
             filter.hasTags.clear()
-            filter.hasTags.addAll(binding.tags.text.toString().split(";"))
+            val tags = binding.tags.text.toString().split(";")
+            if (tags.isNotEmpty() && tags[0].isNotEmpty()) {
+                filter.hasTags.addAll(tags)
+            }
 
             filter.textIncludes.clear()
             filter.textIncludes.addAll(binding.textIncludes.text.toString().split(";"))
 
-            filter.lowestMood = binding.moodSlider.value.toInt().toByte()
+            //TODO от Вовы для Вовы: исправить работу со шкалой настроения
+            //filter.lowestMood = binding.moodSlider.value.toInt().toByte()
+            filter.lowestMood = 1
+            filter.highestMood = 5
 
             listener.onFilter(filter)
 
