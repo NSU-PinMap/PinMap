@@ -61,9 +61,9 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
         map.maxZoomLevel = 22.0
 
         val mapController = map.controller
-        //todo стартовые точки настраивайте как хотите
-        mapController.setZoom(9.5)
-        val startPoint = GeoPoint(48.8583, 2.2944)
+        mapController.setZoom(16.5)
+        // координаты НГУ:
+        val startPoint = GeoPoint(54.842933654785156, 83.09098052978516)
         mapController.setCenter(startPoint)
 
         // Код для дефолтного toolbar
