@@ -233,9 +233,7 @@ class PinConstructorFragment() : Fragment() {
 
     private fun setImageUpdateButtonListener() {
         binding.updateImageButton.setOnClickListener{
-
-            pickImageLauncher.launch(PickVisualMediaRequest())
-
+            pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
     }
 
