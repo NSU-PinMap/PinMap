@@ -39,4 +39,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonpins" />
 
+    <Button
+        android:id="@+id/buttonphoto"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:background="@color/black"
+        android:gravity="start|center_vertical|bottom"
+        android:text="Создать воспоминание по фотографии"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttontags" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
