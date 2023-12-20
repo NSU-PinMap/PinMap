@@ -89,10 +89,10 @@ class PinConstructorFragment() : Fragment() {
                     val longitude = bundle.getFloat("longitude")
 
                     val uri = bundle.getString("uri")
-                    pin.photos = mutableListOf(Uri.parse(uri))
+
 
                     pin = Pin("Новое воспоминание", latitude.toDouble(), longitude.toDouble())
-
+                    pin.photos = mutableListOf(Uri.parse(uri))
                     // конструктор вызван по созданию нового пина; его нельзя удалять из базы, ибо его там ещё нет!
                     binding.deleteButton.visibility = View.GONE
 
