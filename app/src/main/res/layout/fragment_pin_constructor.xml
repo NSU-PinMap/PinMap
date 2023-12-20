@@ -23,7 +23,7 @@
                 android:id="@+id/backButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Return"/>
+                android:text="Назад" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/btnConstraintLayout"
@@ -32,29 +32,29 @@
 
                 <Button
                     android:id="@+id/editButton"
-                    android:layout_width="96dp"
+                    android:layout_width="160dp"
                     android:layout_height="48dp"
-                    android:text="Edit"
+                    android:text="Редактировать"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/deleteButton"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
                     android:id="@+id/deleteButton"
-                    android:layout_width="96dp"
+                    android:layout_width="160dp"
                     android:layout_height="48dp"
-                    android:text="Delete"
+                    android:text="Удалить"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/editButton"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
                     android:id="@+id/saveButton"
-                    android:layout_width="96dp"
+                    android:layout_width="160dp"
                     android:layout_height="48dp"
-                    android:text="Save"
+                    android:text="Сохранить"
                     app:layout_constraintEnd_toStartOf="@+id/cancelButton"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -63,9 +63,9 @@
 
                 <Button
                     android:id="@+id/cancelButton"
-                    android:layout_width="96dp"
+                    android:layout_width="160dp"
                     android:layout_height="48dp"
-                    android:text="Cancel"
+                    android:text="Отмена"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/saveButton"
                     app:layout_constraintTop_toTopOf="parent"
@@ -88,7 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="yyyy-mm-dd"
+                android:hint="гггг-мм-дд"
                 android:inputType="date"
                 android:minHeight="48dp" />
 
@@ -105,13 +105,13 @@
                 android:id="@+id/latitudeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Latitude" />
+                android:hint="Широта" />
 
             <TextView
                 android:id="@+id/longitudeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Longitude" />
+                android:hint="Долгота" />
 
             <EditText
                 android:id="@+id/tagsText"
@@ -130,12 +130,18 @@
                 android:valueFrom="1.0"
                 android:valueTo="5.0"
                 android:stepSize="1.0"  />
+
             <Button
                 android:id="@+id/updateImageButton"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="Edit Photo"
-                />
+                android:text="Добавить фото" />
+
+            <Button
+                android:id="@+id/clearImageButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Очистить выбор фото" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/imagesRecyclerView"
