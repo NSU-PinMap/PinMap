@@ -1,14 +1,17 @@
 package ru.nsu.ccfit.tsd.pinmap.adapters
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.databinding.PinItemBinding
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
 
-class PinAdapter(private val pins: MutableList<Pin>) : RecyclerView.Adapter<PinAdapter.PinHolder>() {
+class PinAdapter(private val pins: MutableList<Pin>, private val navController: NavController)
+    : RecyclerView.Adapter<PinAdapter.PinHolder>() {
     private var pinList = mutableListOf<Pin>()
 
     init {
@@ -19,7 +22,7 @@ class PinAdapter(private val pins: MutableList<Pin>) : RecyclerView.Adapter<PinA
     class PinHolder(item : View) : RecyclerView.ViewHolder(item) {
         private val binding = PinItemBinding.bind(item)
 
-        fun bind(pin: Pin) = with(binding) {
+        fun bind(pin: Pin, navController: NavController) = with(binding) {
             pinNameTextView.text = pin.name
 
             val coordinatesString = "широта: ${pin.latitude}; долгота: ${pin.longitude}"
@@ -40,6 +43,19 @@ class PinAdapter(private val pins: MutableList<Pin>) : RecyclerView.Adapter<PinA
                 val tagsListString = "теги: ${tagsList.joinToString ( separator = ";" )}"
                 tagsListTextView.text = tagsListString
             }
+
+            itemView.setOnClickListener {
+                onPinPressed(pin, navController)
+            }
+        }
+
+        private fun onPinPressed(pin: Pin, navController: NavController) {
+            val bundle = Bundle()
+
+            bundle.putInt("type", 3)
+            bundle.putInt("id", pin.id!!)
+
+            navController.navigate(R.id.pinConstructorFragment, bundle)
         }
     }
 
@@ -53,7 +69,13 @@ class PinAdapter(private val pins: MutableList<Pin>) : RecyclerView.Adapter<PinA
     }
 
     override fun onBindViewHolder(holder: PinHolder, position: Int) {
-        holder.bind(pinList[position])
+        val item = pinList[position]
+        holder.bind(item, navController)
+    }
+
+    fun setPins(newPins: MutableList<Pin>) {
+        pinList = newPins
+        notifyDataSetChanged()
     }
 
     fun sortAlphabetically() {

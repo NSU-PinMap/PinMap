@@ -5,6 +5,8 @@
   
     <string name="optionSortAlphabetically">алфавиту [А->Я]</string>
     <string name="optionSortDescAlphabetically">алфавиту [Я->А]</string>
+    <string name="optionDateSort">дате [старые->новые]</string>
+    <string name="optionDescDateSort">дате [новые->старые]</string>
   
     <string-array name="tags_sort_dropdown_options">
         <item>@string/optionSortAlphabetically</item>
@@ -12,9 +14,9 @@
     </string-array>
   
     <string-array name="pins_sort_dropdown_options">
-        <item>алфавиту [А->Я]</item>
-        <item>алфавиту [Я->А]</item>
-        <item>дате [старые->новые]</item>
-        <item>дате [новые->старые]</item>
+        <item>@string/optionSortAlphabetically</item>
+        <item>@string/optionSortDescAlphabetically</item>
+        <item>@string/optionDateSort</item>
+        <item>@string/optionDescDateSort</item>
     </string-array>
 </resources>

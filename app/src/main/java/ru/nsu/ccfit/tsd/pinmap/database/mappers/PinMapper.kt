@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.tsd.pinmap.database.mappers
 
+import android.net.Uri
 import ru.nsu.ccfit.tsd.pinmap.database.PinMapDatabase
 import ru.nsu.ccfit.tsd.pinmap.database.entities.PinEntity
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
@@ -26,12 +27,17 @@ class PinMapper {
             pin.mood = pinEntity.mood.toUByte()
             pin.date = dateFromTimestamp(pinEntity.date)
             pin.tags =
-                db.tagDao()!!.getTagsByPinId(pin.id!!).map { tagEntity -> tagEntity.name }
+                db.tagDao()!!.getTagsByPinId(pin.id!!)
+                    .map { tagEntity -> tagEntity.name }
+                    .toMutableList()
+            pin.photos =
+                db.photoDao()!!.getPhotosByPinId(pin.id!!)
+                    .map { photoEntity -> Uri.parse(photoEntity.uri) }
                     .toMutableList()
             return pin
         }
 
-        private fun dateFromTimestamp(value: Long?): Date? {
+        public fun dateFromTimestamp(value: Long?): Date? {
             return value?.let { Date(it) }
         }
 
