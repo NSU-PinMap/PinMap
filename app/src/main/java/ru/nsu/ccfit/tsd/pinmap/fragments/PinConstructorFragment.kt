@@ -37,14 +37,17 @@ class PinConstructorFragment() : Fragment() {
     private val imageAdapter = ImageAdapter(imageDataset)
 
     private val pickImageLauncher =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { photo ->
-            if (photo != null) {
-                context?.contentResolver?.takePersistableUriPermission(photo, FLAG_GRANT_READ_URI_PERMISSION)
-                if (imageDataset.contains(photo)){
-                    Toast.makeText(context, "Это фото уже есть в воспоминании!", Toast.LENGTH_SHORT).show()
-                } else {
-                    imageDataset.add(photo)
-                    imageAdapter.updateList(imageDataset)
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) {  photos->
+            for (photo in photos) {
+                if (photo != null) {
+                    context?.contentResolver?.takePersistableUriPermission(
+                        photo,
+                        FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                    if (!imageDataset.contains(photo)) {
+                        imageDataset.add(photo)
+                        imageAdapter.updateList(imageDataset)
+                    }
                 }
             }
         }
