@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
@@ -17,13 +18,12 @@ import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentGalleryBinding
 class GalleryFragment : Fragment() {
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
-    val selectedImageUri: Uri? = null
 
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
+            if (uri != null){
                 // Получаем координаты изображения
-                val location = context?.let { it1 -> getLocationFromImage(it1, it) }
+                val location = context?.let { it1 -> getLocationFromImage(it1, uri) }
                 if (location != null) {
                     val latitude = location[0]
                     val longitude = location[1]
@@ -31,6 +31,8 @@ class GalleryFragment : Fragment() {
                 } else {
                     showNoLocationDialog()
                 }
+            }else{
+                findNavController().navigateUp()
             }
         }
 

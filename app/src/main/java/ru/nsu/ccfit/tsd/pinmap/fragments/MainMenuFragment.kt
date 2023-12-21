@@ -29,5 +29,8 @@ class MainMenuFragment : Fragment() {
 
         val tags_button = view.findViewById<Button>(R.id.buttontags)
         tags_button.setOnClickListener { controller.navigate(R.id.tagsListFragment) }
+
+        val photo_button = view.findViewById<Button>(R.id.buttonphoto)
+        photo_button.setOnClickListener { controller.navigate(R.id.galleryFragment) }
     }
 }
