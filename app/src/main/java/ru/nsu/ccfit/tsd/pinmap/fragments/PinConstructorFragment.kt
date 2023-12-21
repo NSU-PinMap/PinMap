@@ -2,20 +2,21 @@ package ru.nsu.ccfit.tsd.pinmap.fragments
 
 import android.app.AlertDialog
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import ru.nsu.ccfit.tsd.pinmap.contract.PickImageContract
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinConstructorBinding
 import ru.nsu.ccfit.tsd.pinmap.fragments.adapters.ImageAdapter
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin
@@ -32,13 +33,23 @@ class PinConstructorFragment() : Fragment() {
 
     private lateinit var alertBuilder: AlertDialog.Builder
 
-    private var imageDataset = listOf<Uri>()
+    private var imageDataset = mutableListOf<Uri>()
     private val imageAdapter = ImageAdapter(imageDataset)
 
     private val pickImageLauncher =
-        registerForActivityResult(PickImageContract()) { photos ->
-            imageDataset = photos
-            imageAdapter.updateList(photos)
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) {  photos->
+            for (photo in photos) {
+                if (photo != null) {
+                    context?.contentResolver?.takePersistableUriPermission(
+                        photo,
+                        FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                    if (!imageDataset.contains(photo)) {
+                        imageDataset.add(photo)
+                        imageAdapter.updateList(imageDataset)
+                    }
+                }
+            }
         }
 
     override fun onCreateView(
@@ -78,6 +89,7 @@ class PinConstructorFragment() : Fragment() {
                     // чтобы можно было редактировать сразу при открытии фрагмента
                     enableEdit()
                     binding.editButton.visibility = View.GONE
+                    binding.clearImageButton.visibility = View.GONE
                     binding.deleteButton.visibility = View.GONE
                     binding.saveButton.visibility = View.VISIBLE
                     binding.cancelButton.visibility = View.VISIBLE
@@ -98,6 +110,7 @@ class PinConstructorFragment() : Fragment() {
                     // чтобы можно было редактировать сразу при открытии фрагмента
                     enableEdit()
                     binding.editButton.visibility = View.GONE
+                    binding.clearImageButton.visibility = View.VISIBLE
                     binding.deleteButton.visibility = View.GONE
                     binding.saveButton.visibility = View.VISIBLE
                     binding.cancelButton.visibility = View.VISIBLE
@@ -114,6 +127,7 @@ class PinConstructorFragment() : Fragment() {
                     disableEdit()
 
                     binding.editButton.visibility = View.VISIBLE
+                    binding.clearImageButton.visibility = View.GONE
                     binding.deleteButton.visibility = View.VISIBLE
                     binding.saveButton.visibility = View.GONE
                     binding.cancelButton.visibility = View.GONE
@@ -141,6 +155,7 @@ class PinConstructorFragment() : Fragment() {
             binding.tagsText.setText(tagsText)
 
             imageAdapter.updateList(pin.photos)
+            imageDataset = pin.photos
 
             //todo надо придумать как красиво показывать локацию (сейчас это просто две координаты...)
 
@@ -149,6 +164,7 @@ class PinConstructorFragment() : Fragment() {
         alertBuilder = AlertDialog.Builder(context)
 
         setImageUpdateButtonListener()
+        setImageClearButtonListener()
         setBackButtonListener()
         setEditButtonListener()
         setCancelButtonListener()
@@ -174,14 +190,17 @@ class PinConstructorFragment() : Fragment() {
         binding.dateText.inputType = InputType.TYPE_NULL
         binding.dateText.setTextIsSelectable(false)
 
+        binding.tagsText.inputType = InputType.TYPE_NULL
+
         binding.updateImageButton.visibility = View.GONE
+        binding.clearImageButton.visibility = View.GONE
 
         // скрываем клавиатуру
         val inputMethodManager =
             requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
 
-        //todo выключить редактирование локации (когда редактирование будет красивым), тегов и картинок
+        //todo выключить редактирование локации когда редактирование будет красивым
 
         binding.moodSlider.isEnabled = false
     }
@@ -202,17 +221,38 @@ class PinConstructorFragment() : Fragment() {
         binding.dateText.inputType = InputType.TYPE_CLASS_DATETIME
         binding.dateText.setTextIsSelectable(true)
 
-        binding.updateImageButton.visibility = View.VISIBLE
+        binding.tagsText.inputType = InputType.TYPE_CLASS_TEXT
 
-        //todo включить редактирование локации (когда редактирование будет красивым), тегов и картинок
+        binding.updateImageButton.visibility = View.VISIBLE
+        binding.clearImageButton.visibility = View.VISIBLE
+
+        //todo включить редактирование локации когда редактирование будет красивым
 
         binding.moodSlider.isEnabled = true
     }
 
     private fun setImageUpdateButtonListener() {
         binding.updateImageButton.setOnClickListener{
+            pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+    }
 
-            pickImageLauncher.launch(imageDataset)
+    private fun setImageClearButtonListener() {
+        binding.clearImageButton.setOnClickListener{
+
+            alertBuilder.setMessage("Очистить выбор фотографий?")
+                .setCancelable(false)
+                .setPositiveButton("Да") { _, _ ->
+                    imageAdapter.updateList(listOf())
+                    imageDataset = mutableListOf()
+                }
+                .setNegativeButton(
+                    "Нет"
+                ) { _, _ ->
+                }
+            val alert: AlertDialog = alertBuilder.create()
+            alert.setTitle("")
+            alert.show()
 
         }
     }
@@ -259,25 +299,17 @@ class PinConstructorFragment() : Fragment() {
 
             val formatter = SimpleDateFormat("yyyy-MM-dd")
             val text = binding.dateText.text.toString()
-            var date : Date
+            var date : Date?
             try {
                 date = formatter.parse(text)
-            } catch(e : Exception) {
-                date = formatter.parse("1970-01-01")
+            } catch (e : Exception) {
+                date = null
             }
             pin.date = date
 
             pin.tags = binding.tagsText.text.toString().split(";").toMutableList()
 
-            // проверка того, что пин-объект меняется
-            Log.d("pin", pin.name)
-            Log.d("pin", pin.latitude.toString())
-            Log.d("pin", pin.longitude.toString())
-            Log.d("pin", pin.mood.toString())
-            Log.d("pin", pin.description)
-            Log.d("pin", pin.date.toString())
-            Log.d("pin", pin.tags.toString())
-            Log.d("pin", pin.photos.toString())
+            pin.photos = imageDataset.toMutableList()
 
             val isSaved = pinController.save(pin)
             if (isSaved) {
