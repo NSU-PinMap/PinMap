@@ -14,12 +14,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.util.component1
-import androidx.core.util.component2
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import ru.nsu.ccfit.tsd.pinmap.contract.PickImagesContract
+import com.google.android.material.datepicker.MaterialDatePicker
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentPinConstructorBinding
 import ru.nsu.ccfit.tsd.pinmap.fragments.adapters.ImageAdapter
 import ru.nsu.ccfit.tsd.pinmap.pins.Pin

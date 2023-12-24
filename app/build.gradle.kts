@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "ru.nsu.ccfit.tsd.pinmap"
-        minSdk = 27
+        minSdk = 30
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"

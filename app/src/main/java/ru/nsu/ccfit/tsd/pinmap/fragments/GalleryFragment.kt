@@ -4,10 +4,11 @@ import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
@@ -21,7 +22,7 @@ class GalleryFragment : Fragment() {
 
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            if (uri != null){
+            if (uri != null) {
                 // Получаем координаты изображения
                 val location = context?.let { it1 -> getLocationFromImage(it1, uri) }
                 if (location != null) {
@@ -31,7 +32,7 @@ class GalleryFragment : Fragment() {
                 } else {
                     showNoLocationDialog()
                 }
-            }else{
+            } else {
                 findNavController().navigateUp()
             }
         }
@@ -66,11 +67,18 @@ class GalleryFragment : Fragment() {
     }
 
     private fun getLocationFromImage(context: Context, imageUri: Uri): DoubleArray? {
-        context.contentResolver.openInputStream(imageUri)?.use { inputStream ->
-            val exifInterface = ExifInterface(inputStream)
+        val rawId = DocumentsContract.getDocumentId(imageUri)
+        val id = if (rawId.contains(':')) rawId.split(':')[1] else rawId
+        val mediaUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+        val finalUri = MediaStore.setRequireOriginal(mediaUri)
 
-            return exifInterface.latLong
-        }
+        val stream = context.contentResolver.openInputStream(finalUri) ?: return null
+        val exifInterface = ExifInterface(stream)
+        exifInterface
+            .latLong
+            ?.let { (lat, lng) ->
+                return doubleArrayOf(lat, lng)
+            }
 
         return null
     }
