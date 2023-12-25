@@ -26,16 +26,12 @@ class GalleryFragment : Fragment() {
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             if (uri != null) {
-                context?.contentResolver?.takePersistableUriPermission(
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
                 // Получаем координаты изображения
                 val location = context?.let { it1 -> getLocationFromImage(it1, uri) }
                 if (location != null) {
                     val latitude = location[0]
                     val longitude = location[1]
-                    Log.println(Log.ERROR, "LOCATION", "Latitude: $latitude Longitude: $longitude")
+                        //Log.println(Log.ERROR, "LOCATION", "Latitude: $latitude Longitude: $longitude")
                     navigateToConstructor(uri, latitude, longitude)
                 } else {
                     showNoLocationDialog()
