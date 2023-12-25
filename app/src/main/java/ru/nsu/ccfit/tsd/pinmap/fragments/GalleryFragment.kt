@@ -68,11 +68,11 @@ class GalleryFragment : Fragment() {
     }
 
     private fun getLocationFromImage(context: Context, imageUri: Uri): DoubleArray? {
-        val rawId = DocumentsContract.getDocumentId(imageUri)
-        val id = if (rawId.contains(':')) rawId.split(':')[1] else rawId
-        val mediaUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+//        val rawId = DocumentsContract.getDocumentId(imageUri)
+//        val id = if (rawId.contains(':')) rawId.split(':')[1] else rawId
+//        val mediaUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
 
-        val exifInterface = ExifInterface(context.uriToPath(mediaUri).toString())
+        val exifInterface = ExifInterface(context.uriToPath(imageUri).toString())
 
         val f = FloatArray(2)
         return if (exifInterface.getLatLong(f))
