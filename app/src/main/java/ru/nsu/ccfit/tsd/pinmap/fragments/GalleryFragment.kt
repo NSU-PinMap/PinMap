@@ -52,22 +52,22 @@ class GalleryFragment : Fragment() {
         showGallery()
     }
 
-    private fun navigateToConstructor(uri: Uri, lat: Double, lon: Double) {
+    private fun navigateToConstructor(uri: Uri, lat: Float, lon: Float) {
 
         val navController = findNavController()
 
         val bundle = Bundle()
         bundle.putInt("type", 2)
         bundle.putString("uri", uri.toString())
-        bundle.putFloat("latitude", lat.toFloat())
-        bundle.putFloat("longitude", lon.toFloat())
+        bundle.putFloat("latitude", lat)
+        bundle.putFloat("longitude", lon)
         // Чтобы потом из конструктора сюда не попадать
         navController.popBackStack()
         navController.navigate(R.id.pinConstructorFragment, bundle)
 
     }
 
-    private fun getLocationFromImage(context: Context, imageUri: Uri): DoubleArray? {
+    private fun getLocationFromImage(context: Context, imageUri: Uri): FloatArray? {
 //        val rawId = DocumentsContract.getDocumentId(imageUri)
 //        val id = if (rawId.contains(':')) rawId.split(':')[1] else rawId
 //        val mediaUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
@@ -76,7 +76,7 @@ class GalleryFragment : Fragment() {
 
         val f = FloatArray(2)
         return if (exifInterface.getLatLong(f))
-            doubleArrayOf(f[0].toDouble(), f[1].toDouble())
+            floatArrayOf(f[0], f[1])
         else
             null
     }
