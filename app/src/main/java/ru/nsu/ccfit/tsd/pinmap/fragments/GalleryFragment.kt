@@ -2,6 +2,7 @@ package ru.nsu.ccfit.tsd.pinmap.fragments
 
 import android.app.AlertDialog
 import android.content.Context
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
@@ -10,11 +11,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import ru.nsu.ccfit.tsd.pinmap.R
 import ru.nsu.ccfit.tsd.pinmap.databinding.FragmentGalleryBinding
+import ru.nsu.ccfit.tsd.pinmap.utils.uriToPath
 
 class GalleryFragment : Fragment() {
     private var _binding: FragmentGalleryBinding? = null
@@ -70,17 +71,14 @@ class GalleryFragment : Fragment() {
         val rawId = DocumentsContract.getDocumentId(imageUri)
         val id = if (rawId.contains(':')) rawId.split(':')[1] else rawId
         val mediaUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-        val finalUri = MediaStore.setRequireOriginal(mediaUri)
 
-        val stream = context.contentResolver.openInputStream(finalUri) ?: return null
-        val exifInterface = ExifInterface(stream)
-        exifInterface
-            .latLong
-            ?.let { (lat, lng) ->
-                return doubleArrayOf(lat, lng)
-            }
+        val exifInterface = ExifInterface(context.uriToPath(mediaUri).toString())
 
-        return null
+        val f = FloatArray(2)
+        return if (exifInterface.getLatLong(f))
+            doubleArrayOf(f[0].toDouble(), f[1].toDouble())
+        else
+            null
     }
 
     private fun showGallery() {

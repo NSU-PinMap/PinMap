@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "ru.nsu.ccfit.tsd.pinmap"
-        minSdk = 30
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -20,6 +20,9 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            manifestPlaceholders += mapOf(
+                "appProvider" to "com.dot.gallery.media_provider"
+            )
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

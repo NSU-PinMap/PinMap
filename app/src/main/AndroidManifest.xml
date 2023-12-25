@@ -29,17 +29,27 @@
         android:roundIcon="@drawable/pinmap_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.PinMap"
-        tools:targetApi="33">
+        tools:targetApi="31">
         <activity
             android:name=".MapActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.dot.gallery.media_provider"
+            android:enabled="true"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
     </application>
 
 </manifest>
