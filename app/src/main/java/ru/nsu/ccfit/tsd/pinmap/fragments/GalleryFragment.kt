@@ -2,11 +2,13 @@ package ru.nsu.ccfit.tsd.pinmap.fragments
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,11 +26,16 @@ class GalleryFragment : Fragment() {
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             if (uri != null) {
+                context?.contentResolver?.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
                 // Получаем координаты изображения
                 val location = context?.let { it1 -> getLocationFromImage(it1, uri) }
                 if (location != null) {
                     val latitude = location[0]
                     val longitude = location[1]
+                    Log.println(Log.ERROR, "LOCATION", "Latitude: $latitude Longitude: $longitude")
                     navigateToConstructor(uri, latitude, longitude)
                 } else {
                     showNoLocationDialog()
