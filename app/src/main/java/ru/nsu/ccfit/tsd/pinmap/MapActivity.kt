@@ -2,14 +2,15 @@ package ru.nsu.ccfit.tsd.pinmap
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.preference.PreferenceManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -37,6 +38,7 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
         return binding
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,8 +46,13 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-        val permissions: Array<String> =
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION)
+        val permissions: MutableList<String> =
+            mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_MEDIA_LOCATION)
+        if (Build.VERSION.SDK_INT >= 33) {
+            permissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+        } else {
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)}
+
         requestPermissionsIfNecessary(permissions)
 
         val ctx = applicationContext
@@ -87,7 +94,7 @@ class MapActivity : AppCompatActivity(), FilterDialog.Filterable {
     }
 
 
-    private fun requestPermissionsIfNecessary(permissions: Array<String>) {
+    private fun requestPermissionsIfNecessary(permissions: MutableList<String>) {
         val permissionsToRequest = ArrayList<String>()
         for (permission in permissions) {
             if (ContextCompat.checkSelfPermission(this, permission)

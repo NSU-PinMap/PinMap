@@ -14,8 +14,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.util.component1
-import androidx.core.util.component2
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -104,10 +102,10 @@ class PinConstructorFragment() : Fragment() {
                     val longitude = bundle.getFloat("longitude")
 
                     val uri = bundle.getString("uri")
-                    pin.photos = mutableListOf(Uri.parse(uri))
+
 
                     pin = Pin("Новое воспоминание", latitude.toDouble(), longitude.toDouble())
-
+                    pin.photos = mutableListOf(Uri.parse(uri))
                     // конструктор вызван по созданию нового пина; его нельзя удалять из базы, ибо его там ещё нет!
                     binding.deleteButton.visibility = View.GONE
 
